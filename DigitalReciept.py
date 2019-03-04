@@ -14,6 +14,32 @@ class DigitalReciept:
         self.genre = ""
         self.genres = ['Food','Hygene','Cleaning','Clothes','Alcohol','Recreation','Gaming']
 
+    def __str__(self):
+        return "{0:<9.8} {1:<4}  ${2:>8.2f}  {4:^12.11}  {3:^14.13}  Notes:{5:<50}".format(self.dateOfPurchase.strftime("%x"), self.cardNum, self.cost*self.signCost, self.placeOfPurchase, self.genre, self.information)
+        
+    def __lt__(self,other):
+        if self.dateOfPurchase == other.getDate():
+            if self.cardNum == other.getCardNum():
+                return self.cost < other.getCost()
+            return self.cardNum < other.getCardNum()
+        return self.dateOfPurchase < other.getDate()
+
+    def __gt__(self,other):
+        if self.dateOfPurchase == other.getDate():
+            if self.cardNum == other.getCardNum():
+                return self.cost > other.getCost()
+            return self.cardNum > other.getCardNum()
+        return self.dateOfPurchase > other.getDate()
+
+    def __eq__(self, other):
+        return (self.dateOfPurchase == other.getDate()) and (self.cardNum == other.getCardNum()) and (self.cost == other.getCost())
+
+    def __le__(self,other):
+        return (self < other) or (self == other)
+
+    def __ge__(self, other):
+        return (self > other) or (self == other)
+
     #getters
     def getDate(self):
         return self.dateOfPurchase
@@ -81,7 +107,7 @@ class DigitalReciept:
         option = 0
         while option is not 7:
             while option < 1 and option > 7:
-                print(self.toString())
+                print(self)
                 print("What field do you wish to edit:",
                     "1. Date of Purchase",
                     "2. Card Number",
@@ -117,11 +143,3 @@ class DigitalReciept:
         self.queryGenre()
         
         self.queryInfo()
-
-    #parses member data into a formatted string
-    def toString(self):
-        return "{0:<9.8} {1:<4}  ${2:>8.2f}  {4:^12.11}  {3:^14.13}  Notes:{5:<50}".format(self.dateOfPurchase.strftime("%x"), self.cardNum, self.cost*self.signCost, self.placeOfPurchase, self.genre, self.information)
-
-y = DigitalReciept()
-y.fillReciept()
-print(y.toString())
