@@ -1,0 +1,11 @@
+Make UML for this!!
+
+read in jpg files from a folder.
+When reading in at first have a validation so it will ask you for a value if one could not be determined
+transform each jpg into a DigitalReciept object with the regex capabilities of python
+split digital reciepts by card number
+sort the DigitalReciept objects by order of date in respective lists
+take each digital reciept object and record it in the designated csv file
+
+optional later functionality:
+Create an analysis system that anaylizes the csv and returns statistics such as average daily spending, monthly spending
