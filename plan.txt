@@ -9,3 +9,7 @@ take each digital reciept object and record it in the designated csv file
 
 optional later functionality:
 Create an analysis system that anaylizes the csv and returns statistics such as average daily spending, monthly spending
+
+set budget tell if its over or not
+compare to other months
+compare to budget
