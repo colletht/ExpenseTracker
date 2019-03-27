@@ -2,7 +2,7 @@ import re
 from datetime import date
 #File contains definition for Digital Reciept object that will store data for an individual reciept
 
-#digital reciept class, holds data for reciept
+#digital reciept class, holds data for reciept and all functions responsible for maintaining reciept
 class DigitalReciept:
     def __init__(self):
         self.cost = 0.0
@@ -12,7 +12,6 @@ class DigitalReciept:
         self.placeOfPurchase = ""
         self.information = ""
         self.genre = ""
-        self.genres = ['Food','Hygene','Cleaning','Clothes','Alcohol','Recreation','Gaming']
 
     def __str__(self):
         return "{0:<9.8} {1:<4}  ${2:>8.2f}  {4:^12.11}  {3:^14.13}  Notes:{5:<50}".format(self.dateOfPurchase.strftime("%x"), self.cardNum, self.cost*self.signCost, self.placeOfPurchase, self.genre, self.information)
@@ -89,12 +88,12 @@ class DigitalReciept:
 
         self.cost = float(input("Enter the cost accrued:\t\t$"))
 
-    def queryGenre(self):
+    def queryGenre(self, genres):
         i = 1
-        for x in self.genres:
+        for x in genres:
             print(i, x, sep = '\t', end = '\n')
             i+=1
-        self.genre = self.genres[int(input("Select a genre by number:\t"))-1]
+        self.genre = genres[int(input("Select a genre by number:\t"))-1]
     
     def queryPlace(self):
         self.placeOfPurchase = input("Enter location of purchase:\t")
@@ -103,7 +102,7 @@ class DigitalReciept:
         self.information = input("Enter any extra information:\t")
 
     #edits the member data of a Digital Reciept Object, allows for user choice of which fields to edit
-    def editReciept(self):
+    def editReciept(self, genres):
         option = 0
         while option is not 7:
             while option < 1 and option > 7:
@@ -124,14 +123,14 @@ class DigitalReciept:
             elif option == 3:
                 self.queryCost()
             elif option == 4:
-                self.queryGenre()
+                self.queryGenre(genres)
             elif option == 5:
                 self.queryPlace()
             else:
                 self.queryInfo()
 
     #fills the reciept in case any missing data was not provided in the constructor
-    def fillReciept(self):
+    def fillReciept(self, genres):
         self.queryPlace()
 
         self.queryDate()
@@ -140,6 +139,6 @@ class DigitalReciept:
 
         self.queryCost()
 
-        self.queryGenre()
+        self.queryGenre(genres)
         
         self.queryInfo()

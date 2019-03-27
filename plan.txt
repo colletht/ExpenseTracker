@@ -13,3 +13,44 @@ Create an analysis system that anaylizes the csv and returns statistics such as 
 set budget tell if its over or not
 compare to other months
 compare to budget
+
+--------------------
+Commands:
+--------------------
+init [[filename] | [-h | --help]]
+initializes a new file to track expenses in, sets this file path to default filepath in main file
+
+load [[filename] | [-h | --help]]
+select a different file from default that has expenses stored in it to view and modify
+
+add [[-r | --reciept] | [-b, --budget] | [-g | --genre] | [-h | --help]]
+add a new reciept to the current file in order by default, or can select to add a new budget value, or genre value
+
+filter [ [[[-d | --day] [-m | --month] [-y | --year]] | [--daterange]] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto] | [--costrange]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
+allows user to create and save a filter under a name which can be called upon in any of the other commands requiring filtering
+
+print [ [[[-d | --day] [-m | --month] [-y | --year]] | [--daterange]] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto] | [--costrange]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
+prints reciept(s), can be filtered depending on applied modifiers, each modifier must first name its category followed by the filter in ""
+
+sum [[[-d | --day] [-m | --month] [-y | --year] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
+sums reciept costs together, can be filtered depending on applied modifiers
+
+average [[[-d | --day] [-m | --month] [-y | --year] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
+performs mean operation on reciepts across the dates the span, can be filtered depending on applied modifiers
+
+analytics [[[-d | --day] [-m | --month] [-y | --year] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
+returns a list of analytics for reciepts including, sum, average, averages per genre, most shopped location, defaults to a monthly time period however this can be changed with applied filtered
+
+edit [[[-d | --day] [-m | --month] [-y | --year] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
+allows user to edit a single reciept to be searched for, must enter filters to narrow search and then select from given list
+
+store [[filename] | [-h | --help]]
+writes the current data contents to the specified file path in ExpenseTracker object defualts to current file in ExpenseTracker
+
+exit [[filename] | [-h | --help]]
+exits application, before exiting the current data is written and saved to the current filepath and all necessary files are closed
+
+help [command name]
+returns a list of all the commands, their specifications and their possible modifiers. If a command name is entered after help only that command will be shown
+
+TODO: come up with syntax for range selection. both with cost and with date

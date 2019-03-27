@@ -4,5 +4,7 @@ import DigitalReciept
 class Journal:
     def __init__(self):
         self.journal = []
+        self.budget = 0
+        self.genres = ['Food','Hygene','Cleaning','Clothes','Alcohol','Recreation','Gaming']
 
     
