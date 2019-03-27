@@ -14,7 +14,7 @@ class DigitalReciept:
         self.genre = ""
 
     def __str__(self):
-        return "{0:<9.8} {1:<4}  ${2:>8.2f}  {4:^12.11}  {3:^14.13}  Notes:{5:<50}".format(self.dateOfPurchase.strftime("%x"), self.cardNum, self.cost*self.signCost, self.placeOfPurchase, self.genre, self.information)
+        return "{0:<9.8} {1:<4}  ${2:>8.2f}  {4:^12.11}  {3:^14.13}  Notes: {5:<50}".format(self.dateOfPurchase.strftime("%x"), self.cardNum, self.cost*self.signCost, self.placeOfPurchase, self.genre, self.information)
         
     def __lt__(self,other):
         if self.dateOfPurchase == other.getDate():
@@ -73,7 +73,7 @@ class DigitalReciept:
                 patt = re.search(r'(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})',dateStr)
                 self.dateOfPurchase = date(int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
                 success = True
-            except ValueError:
+            except:
                 print("Please make sure your date is valid and entered in US format.")
 
     def queryCardNum(self):
@@ -88,16 +88,25 @@ class DigitalReciept:
             self.signCost = 1
         else:
             self.signCost = -1
-
-        self.cost = float(input("Enter the cost accrued:\t\t$"))
+        while True:
+            try:
+                self.cost = float(input("Enter the cost accrued:\t\t$"))
+                break
+            except:
+                print("Enter a number")
 
     def queryGenre(self, genres):
-        i = 1
-        for x in genres:
-            print(i, x, sep = '\t', end = '\n')
-            i+=1
-        self.genre = genres[int(input("Select a genre by number:\t"))-1]
-    
+        while True:
+            try:
+                i = 1
+                for x in genres:
+                    print(i, x, sep = '\t', end = '\n')
+                    i+=1
+                self.genre = genres[int(input("Select a genre by number:\t"))-1]
+                break
+            except:
+                print("Please enter a number corresponding to a genre on the screen.")
+
     def queryPlace(self):
         self.placeOfPurchase = input("Enter location of purchase:\t")
 
@@ -159,6 +168,38 @@ class FilterReciept:
         self.genre = None
         self.keyWord = None
     
+    def __str__(self):
+        finalString = ""
+        if self.startDate is not None:
+            finalString += "{0:>9.8}".format(self.startDate.strftime("%x"))
+        if self.startDate is not None and self.endDate is not None:
+            finalString += " - "
+        if self.endDate is not None:
+            finalString += "{0:<9.8}".format(self.endDate.strftime("%x"))
+        if self.cardNum is not None:
+            finalString += " {0:<4}".format(self.cardNum)
+        if self.signCost is not None:
+            if self.loCost is not None and self.hiCost is None:
+                finalString += " ${0:>8.2f} <".format(self.signCost*self.loCost)
+            elif self.loCost is None and self.hiCost is not None:
+                finalString += " < ${0:>8.2f}".format(self.signCost*self.hiCost)
+            else:
+                finalString += " ${0:>8.2f} < ${1:>8.2f}".format(self.signCost*self.loCost, self.signCost*self.hiCost)
+        else:
+            if self.loCost is not None and self.hiCost is None:
+                finalString += " ${0:>8.2f} <".format(self.loCost)
+            elif self.loCost is None and self.hiCost is not None:
+                finalString += " < ${0:>8.2f}".format(self.hiCost)
+            elif self.loCost and self.hiCost:
+                finalString += " ${0:>8.2f} < ${1:>8.2f}".format(self.loCost, self.hiCost)
+        if self.genre is not None:
+            finalString += " {0:^12.11}".format(self.genre)
+        if self.placeOfPurchase is not None:
+            finalString += " {0:^14.13}".format(self.placeOfPurchase)
+        if self.keyWord is not None:
+            finalString += " Keyword: {0:<50}".format(self.keyWord)
+        return finalString
+
     def match(self, reciept):
         matches = True
         if self.startDate is not None:
@@ -189,14 +230,23 @@ class FilterReciept:
             self.signCost = 1
         elif x is "C":
             self.signCost = -1
-            
-        x = input("Enter low range value (Press enter for none):\t")
-        if x is not '':
-            self.loCost = float(x)
-        x = input("Enter high range value (Press enter for none):\t")
-        if x is not '':
-            self.hiCost = float(x)
-    
+        while True:
+            try:
+                x = input("Enter low range value (Press enter for none):\t")
+                if x is not '':
+                    self.loCost = float(x)
+                break
+            except:
+                print("Enter a number")
+        while True:
+            try:
+                x = input("Enter high range value (Press enter for none):\t")
+                if x is not '':
+                    self.hiCost = float(x)
+                break
+            except:
+                print("Enter a number")
+
     def queryCardNum(self):
         self.cardNum = input("Enter 4 digit Card Number:\t")
     
@@ -213,7 +263,7 @@ class FilterReciept:
                 patt = re.search(r'(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})',dateStr)
                 self.startDate = date(int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
                 success = True
-            except ValueError:
+            except:
                 print("Please make sure your date is valid and entered in US format.")
             
         success = False
@@ -228,18 +278,23 @@ class FilterReciept:
                 patt = re.search(r'(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})',dateStr)
                 self.endDate = date(int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
                 success = True
-            except ValueError:
+            except:
                 print("Please make sure your date is valid and entered in US format.")
 
     def queryPlace(self):
         self.placeOfPurchase = input("Enter Place of Purchase: \t")
         
     def queryGenre(self, genres):
-        i = 1
-        for x in genres:
-            print(i, x, sep = '\t', end = '\n')
-            i+=1
-        self.genre = genres[int(input("Select a genre by number:\t"))-1]
+        while True:
+            try:
+                i = 1
+                for x in genres:
+                    print(i, x, sep = '\t', end = '\n')
+                    i+=1
+                self.genre = genres[int(input("Select a genre by number:\t"))-1]
+                break
+            except:
+                print("Please enter a number corresponding to a genre on the screen.")
 
     def queryKeyword(self):
         self.keyWord = input("Enter keyword:\t\t")
@@ -274,11 +329,7 @@ class FilterReciept:
 
         
 
-r = DigitalReciept()
-r.fillReciept(['Food','Hygene','Cleaning','Clothes','Alcohol','Recreation','Gaming'])
-print(r)
-f = FilterReciept()
-f.fillFilter(['Food','Hygene','Cleaning','Clothes','Alcohol','Recreation','Gaming'])
-print(f.match(r))
-
+f = DigitalReciept()
+f.fillReciept(['Food','Hygene','Cleaning','Clothes','Alcohol','Recreation','Gaming'])
+print(f)
 #TODO: make all query functions error proof so code does not break if incorrect input is entered
