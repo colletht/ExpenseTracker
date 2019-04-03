@@ -26,7 +26,7 @@ select a different file from default that has expenses stored in it to view and 
 add [[-r | --reciept] | [-b, --budget] | [-g | --genre] | [-h | --help]]
 add a new reciept to the current file in order by default, or can select to add a new budget value, or genre value
 
-filter [ [[[-d | --day] [-m | --month] [-y | --year]] | [--daterange]] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto] | [--costrange]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
+filter [[-e | --edit] | [-n | --new]]
 allows user to create and save a filter under a name which can be called upon in any of the other commands requiring filtering
 
 print [ [[[-d | --day] [-m | --month] [-y | --year]] | [--daterange]] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto] | [--costrange]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
@@ -54,3 +54,5 @@ help [command name]
 returns a list of all the commands, their specifications and their possible modifiers. If a command name is entered after help only that command will be shown
 
 TODO: come up with syntax for range selection. both with cost and with date
+
+Notes: For more complicated filters it is recommended to create a save a filter 
