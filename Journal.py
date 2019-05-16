@@ -69,13 +69,18 @@ class Journal:
 
     #prints the journal, if a filter is passed it it is set to the current filter for the duration of the function, if a cur filter is set then it filters
     #off of that otherwise it prints the entire contents
-    def printJournal(self, filter = None):
+    def printJournal(self, filter = None, toCSV = False):
         if filter and isinstance(filter, str) and filter in self.filters.keys():
             self.curFilter = self.filters[filter]
         tmpJournal = self.applyFilter()
 
-        for reciept in tmpJournal:
-            print(reciept)
+        if(not toCSV):
+            for reciept in tmpJournal:
+                print(reciept)
+        else:
+            #case print to CSV
+            #TODO: implement printing to new csv file
+            pass
         #if a temporary filter was passed in erase it afte rthe funciton
         if filter:
             self.curFilter = None
@@ -130,13 +135,23 @@ class Journal:
     #   Journal Budget
     #   Journal Sum
     #   Journal Average Daily, Monthly, Yearly (If Any are not applicable will not display)
+    #   Journal Min Reciept
+    #   Journal Max Reciept
     # for each genre:
     #   Genre Name:
     #       Budget
     #       Sum
     #       Average Daily, Monthly, Yearly
+    #       Min Reciept
+    #       Max Reciept
     #   
-    def generateReport(self, filter = None):
+    def generateReport(self, timeUnit = "m"):
+        pass
+
+    #provides menu interface to edit individual genres. You have two options when editing a genre:
+    #   1. Change Budget
+    #   2. Delete Genre
+    def editGenres(self):
         pass
 
     #helper funciton that applies the current filter and returns the resulting sublist 
