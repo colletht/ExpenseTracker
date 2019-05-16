@@ -2,21 +2,32 @@ import DigitalReciept, functools, os, pprint
 
 #journal will work similar to accounting journal, keep track of expenses and entries to different categories. Contains functions to get analytics from spendings
 class Journal:
-    def __init__(self, genreList = ['Food','Hygene','Cleaning','Clothes','Alcohol','Recreation','Gaming']):
+    def __init__(self, genreList = {'Food':None,'Hygene':None,'Cleaning':None,'Clothes':None,'Alcohol':None,'Recreation':None,'Gaming':None,'Gas':None}):
         self.journal = []
         self.budget = 0
         self.genres = genreList
         self.curFilter = None   
         self.filters = {}    #will hold dictionary of saved filters and their names, filters are FilterReciept objects with special values to be evauluated by the matches filter function
     
+    #prompts for value for a budget
+    def queryBudget(self):
+        while True:
+            try:
+                res = input("Enter a monthly budget:\t")
+                res = float(res)
+                return res
+            except:
+                print("Please enter a valid value for a budget")
+        
     #adds a new genre to the genre list
     def addGenre(self):
         res = input("Enter the name of your new genre:\t")
-        if res.lower() in list(map(lambda x: x.lower(), self.genres)):
+        if res.lower() in list(map(lambda x: x.lower(), self.genres.keys())):
             print("You must enter a genre does not yet exist")
             return False
         else:
-            self.genres.append(res.strip())
+            newBudget = self.queryBudget()
+            self.genres[res.strip()] = newBudget
             return True
 
     def writeJournal(self,file):
@@ -26,14 +37,14 @@ class Journal:
 
     def addReciept(self):
         p = DigitalReciept.DigitalReciept()
-        p.fillReciept(self.genres)
+        p.fillReciept(self.genres.keys())
         self.journal += p
         self.journal.sort()
         #TODO: inefficient: figure out an insert in order way rather than needlessly sorting list every time
 
     #allows user to edit a reciept that has been searched for
     def editReciept(self, reciept):
-        reciept.editReciept(self.genres)
+        reciept.editReciept(self.genres.keys())
 
     #guides the user through adding a new filter to the filters dicitonary and asks if it should be set to the current filter
     def addFilter(self):
@@ -41,7 +52,7 @@ class Journal:
         while name in self.filters.keys():
             name = input('Please select a name for the new filter that is not already a filter name:\t')
         f = DigitalReciept.FilterReciept()
-        f.fillFilter(self.genres)
+        f.fillFilter(self.genres.keys())
         self.filters[name] = f
         res = input('Would you like to set this as the current filter?\t')
         if res.lower()[0] == 'y':
@@ -51,8 +62,10 @@ class Journal:
     def setFilter(self, filterName):
         if filterName in self.filters.keys():
             self.curFilter = self.filters[filterName]
+            return True
         else:
             print("It appears there is no filter with that name, please choose a valid name.")
+            return False
 
     #prints the journal, if a filter is passed it it is set to the current filter for the duration of the function, if a cur filter is set then it filters
     #off of that otherwise it prints the entire contents
@@ -112,6 +125,19 @@ class Journal:
         #if a temporary filter was passed in erase it afte rthe funciton
         if filter:
             self.curFilter = None
+
+    #generates a report of the journal based off of given filter. A report includes:
+    #   Journal Budget
+    #   Journal Sum
+    #   Journal Average Daily, Monthly, Yearly (If Any are not applicable will not display)
+    # for each genre:
+    #   Genre Name:
+    #       Budget
+    #       Sum
+    #       Average Daily, Monthly, Yearly
+    #   
+    def generateReport(self, filter = None):
+        pass
 
     #helper funciton that applies the current filter and returns the resulting sublist 
     def applyFilter(self):
