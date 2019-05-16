@@ -1,58 +1,68 @@
 Make UML for this!!
 
-read in jpg files from a folder.
-When reading in at first have a validation so it will ask you for a value if one could not be determined
-transform each jpg into a DigitalReciept object with the regex capabilities of python
-split digital reciepts by card number
-sort the DigitalReciept objects by order of date in respective lists
-take each digital reciept object and record it in the designated csv file
-
-optional later functionality:
-Create an analysis system that anaylizes the csv and returns statistics such as average daily spending, monthly spending
-
-set budget tell if its over or not
-compare to other months
-compare to budget
+Commands will be offerd in a verbose menu way for users who want a slower but more clear interface, or a more traditional command line-esque way for a faster experience
 
 --------------------
-Commands:
+Commands (Verbose):
 --------------------
-init [[filename] | [-h | --help]]
-initializes a new file to track expenses in, sets this file path to default filepath in main file
+    MainMenu:
+        1. Reciepts
+            1. Add a new Reciept
+            2. Edit an existing Reciept
+        2. Genres
+            1. Add a new Genre
+            2. Edit your Genre Settings
+        3. Filters
+            1. Add a new Filter
+            2. Edit your Filters
+            3. Set a Current Filter
+        4. Analytics
+            1. Print your Journal
+            2. View Journal Sum
+            3. View Journal Averages
+        5. Generate a Report
+        6. Settings
 
-load [[filename] | [-h | --help]]
-select a different file from default that has expenses stored in it to view and modify
+        Filtering by <FilterName> >>>
 
-add [[-r | --reciept] | [-b, --budget] | [-g | --genre] | [-h | --help]]
-add a new reciept to the current file in order by default, or can select to add a new budget value, or genre value
+    //press enter with no input to go back a level
+--------------------
+Commands (Non-Verbose):
+--------------------
+    
+    MainMenu:
+        Filtering by <FilterName> >>>
 
-filter [[-e | --edit] | [-n | --new]]
-allows user to create and save a filter under a name which can be called upon in any of the other commands requiring filtering
+    Commands:
+        help
+            provides information on all commands
 
-print [ [[[-d | --day] [-m | --month] [-y | --year]] | [--daterange]] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto] | [--costrange]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
-prints reciept(s), can be filtered depending on applied modifiers, each modifier must first name its category followed by the filter in ""
+        reciept [ add | edit ]
+            command to route to add or edit reciept prompt
 
-sum [[[-d | --day] [-m | --month] [-y | --year] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
-sums reciept costs together, can be filtered depending on applied modifiers
+        genre [ add | edit ]
+            command routes to the add or edit genre prompt
 
-average [[[-d | --day] [-m | --month] [-y | --year] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
-performs mean operation on reciepts across the dates the span, can be filtered depending on applied modifiers
+        filter [ add | edit | set ]
+            command routes to the add edit or set filter prompts
 
-analytics [[[-d | --day] [-m | --month] [-y | --year] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
-returns a list of analytics for reciepts including, sum, average, averages per genre, most shopped location, defaults to a monthly time period however this can be changed with applied filtered
+        print 
+            prints the Journal
 
-edit [[[-d | --day] [-m | --month] [-y | --year] [-p | --place] [-c | --card] [-g | --genre] [[-< | --lessthan] | [-> | --greaterthan] | [-= | --equalto]] [[-f | --firstmatch] | [-l | --lastmatch]]] | [-h | --help]]
-allows user to edit a single reciept to be searched for, must enter filters to narrow search and then select from given list
+        sum 
+            prints the sum of the Journal
 
-store [[filename] | [-h | --help]]
-writes the current data contents to the specified file path in ExpenseTracker object defualts to current file in ExpenseTracker
+        average 
+            prints the averages of the Journal
 
-exit [[filename] | [-h | --help]]
-exits application, before exiting the current data is written and saved to the current filepath and all necessary files are closed
+        report
+            prints the report as specified in the comments of Journa.py
 
-help [command name]
-returns a list of all the commands, their specifications and their possible modifiers. If a command name is entered after help only that command will be shown
+        settings 
+            routes to settings page where user can change name, menumode, and in the future, reference files
+            
+    General:
+        each of these commands will take you to the same menu that the verbose would. However the non verbose provides a faster way for more knowledgable users
 
-TODO: come up with syntax for range selection. both with cost and with date
 
-Notes: For more complicated filters it is recommended to create a save a filter 
+
