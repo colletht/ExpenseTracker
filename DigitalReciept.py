@@ -1,5 +1,5 @@
 import re
-from datetime import date
+from datetime import date,timedelta
 #File contains definition for Digital Reciept object that will store data for an individual reciept
 
 #digital reciept class, holds data for reciept and all functions responsible for maintaining reciept
@@ -167,7 +167,7 @@ class FilterReciept:
         self.placeOfPurchase = None
         self.genre = None
         self.keyWord = None
-    
+
     def __str__(self):
         finalString = ""
         if self.startDate is not None:
@@ -327,9 +327,9 @@ class FilterReciept:
             elif option == 6:
                 self.queryKeyword()
 
-        
+def getLastMonthFilter():
+    f = FilterReciept()
+    f.startDate = date.today().replace(day=1) - timedelta(days=1)
+    return f
 
-f = DigitalReciept()
-f.fillReciept(['Food','Hygene','Cleaning','Clothes','Alcohol','Recreation','Gaming'])
-print(f)
 #TODO: make all query functions error proof so code does not break if incorrect input is entered
