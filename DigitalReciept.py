@@ -31,7 +31,7 @@ class DigitalReciept:
         return self.dateOfPurchase > other.getDate()
 
     def __eq__(self, other):
-        return (self.dateOfPurchase == other.getDate()) and (self.cardNum == other.getCardNum()) and (self.cost == other.getCost())
+        return (self.dateOfPurchase == other.getDate()) and (self.cardNum == other.getCardNum()) and (self.getRealCost() == other.getRealCost())
 
     def __le__(self,other):
         return (self < other) or (self == other)

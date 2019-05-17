@@ -6,6 +6,7 @@ Commands will be offerd in a verbose menu way for users who want a slower but mo
 Commands (Verbose):
 --------------------
     MainMenu:
+        0. Exit
         1. Reciepts
             1. Add a new Reciept
             2. Edit an existing Reciept

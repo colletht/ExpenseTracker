@@ -44,6 +44,23 @@ class Journal:
         self.journal.sort()
         #TODO: inefficient: figure out an insert in order way rather than needlessly sorting list every time
 
+    #searches for a reciept based on the given filter. Returns the reciept if found, returns None if cancel is entered
+    def searchReciept(self, filter):
+        tmpJournal = applyFilter(tmpFilter = filter)
+        res = -1
+        while res < 0 and res > len(tmpJournal):
+            print("0.\tCancel\n")
+            i = 1
+            for reciept in tmpJournal:
+                print(str(i) + ".", str(reciept), sep = "\t", end = "\n")
+                i = i+1
+        
+            res = int(input("Enter the desired reciept:\t"))
+
+        if(res is not 0):
+            return tmpJournal[res-1]
+        return None
+
     #allows user to edit a reciept that has been searched for
     def editReciept(self, reciept):
         reciept.editReciept(self.genres.keys())
