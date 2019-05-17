@@ -1,4 +1,4 @@
-import DigitalReciept, functools, os, pprint
+import DigitalReciept, functools, os, pickle
 
 #journal will work similar to accounting journal, keep track of expenses and entries to different categories. Contains functions to get analytics from spendings
 class Journal:
@@ -31,8 +31,10 @@ class Journal:
             return True
 
     def writeJournal(self,file):
-        pass
-        #here we will use pprint.pformat(journal) to print the results to the given file.py and then we can read it in from there whenever we wish
+        with open(file,"wb") as output:
+            pickle.dump(self,output,-1)
+
+        #use pickle module to print to a file. will use pickle to read from file as well
         #TODO: Implement file I/O for reciepts and journal objects, then polish off core functionalities and move on to the main driver class!
 
     def addReciept(self):
@@ -69,18 +71,13 @@ class Journal:
 
     #prints the journal, if a filter is passed it it is set to the current filter for the duration of the function, if a cur filter is set then it filters
     #off of that otherwise it prints the entire contents
-    def printJournal(self, filter = None, toCSV = False):
+    def printJournal(self, filter = None):
         if filter and isinstance(filter, str) and filter in self.filters.keys():
             self.curFilter = self.filters[filter]
         tmpJournal = self.applyFilter()
 
-        if(not toCSV):
-            for reciept in tmpJournal:
-                print(reciept)
-        else:
-            #case print to CSV
-            #TODO: implement printing to new csv file
-            pass
+        for reciept in tmpJournal:
+            print(reciept)
         #if a temporary filter was passed in erase it afte rthe funciton
         if filter:
             self.curFilter = None
