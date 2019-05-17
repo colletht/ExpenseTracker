@@ -133,6 +133,7 @@ class Journal:
 
     #generates a report of the journal based off of given filter. A report includes:
     #   Journal Budget
+    #   Journal Balance Sum
     #   Journal Sum
     #   Journal Average Daily, Monthly, Yearly (If Any are not applicable will not display)
     #   Journal Min Reciept
@@ -140,13 +141,64 @@ class Journal:
     # for each genre:
     #   Genre Name:
     #       Budget
+    #       Balance Sum
     #       Sum
     #       Average Daily, Monthly, Yearly
     #       Min Reciept
     #       Max Reciept
     #   
     def generateReport(self, timeUnit = "m"):
-        pass
+        if "m" == timeUnit:
+            print("--------------------\n" + 
+                  " LAST MONTHS REPORT \n" + 
+                  "--------------------\n")
+            tmpJournal = applyFilter(tmpFilter = DigitalReciept.getLastMonthFilter())
+        
+        balance = 0.0
+        sum = 0.0
+        minReciept = maxReciept = tmpJournal[0]
+        for reciept in tmpJournal:
+            balance = balance + reciept.getRealCost()
+            sum = sum + reciept.getCost()
+            if minReciept.getRealCost() > reciept.getRealCost(): minReciept = reciept
+            if maxReciept.getRealCost() < reciept.getRealCost(): maxReciept = reciept
+
+
+        print("MONTHLY BUDGET:\t" + str(self.budget), end = "\n")
+        print("MONTHLY BALANCE:\t${0:>8.2f}".format(balance), end = "\n")
+        print("MONTHLY SUM:\t${0:>8.2f}".format(sum), end = "\n")
+        print("AVERAGE DAILY EXPENDITURE:\t${0:>8.2f}".format(balance/len(tmpJournal)), end = "\n")
+        print("MINIMUM RECIEPT:\t" + str(minReciept), end = "\n")
+        print("MAXIMUM RECIEPT:\t" + str(maxReciept), end = "\n")
+        print("--------------------\n" +
+              "  REPORT BY GENRE   \n" + 
+              "--------------------\n")
+        for genre in self.genres.keys():
+            self.generateGenreReport(genre, timeUnit, tmpJournal)
+
+    #NOTE: inefficient if time implement method to generate all information for reports in a single run through the list. Use a dictionary for that
+    def generateGenreReport(self, genre, timeUnit, tmpJournal):
+        print("    --------------------\n" +
+              "    {0:^20.20}\n".format(genre) + 
+              "    --------------------\n")
+
+        balance = 0.0
+        sum = 0.0
+        minReciept = maxReciept = tmpJournal[0]
+        for reciept in tmpJournal:
+            if reciept.genre == genre:
+                balance = balance + reciept.getRealCost()
+                sum = sum + reciept.getCost()
+                if minReciept.getRealCost() > reciept.getRealCost(): minReciept = reciept
+                if maxReciept.getRealCost() < reciept.getRealCost(): maxReciept = reciept
+
+
+        print("    MONTHLY BUDGET:\t" + str(self.budget), end = "\n")
+        print("    MONTHLY BALANCE:\t${0:>8.2f}".format(balance), end = "\n")
+        print("    MONTHLY SUM:\t${0:>8.2f}".format(sum), end = "\n")
+        print("    AVERAGE DAILY EXPENDITURE:\t${0:>8.2f}".format(balance/len(tmpJournal)), end = "\n")
+        print("    MINIMUM RECIEPT:\t" + str(minReciept), end = "\n")
+        print("    MAXIMUM RECIEPT:\t" + str(maxReciept), end = "\n")
 
     #provides menu interface to edit individual genres. You have two options when editing a genre:
     #   1. Change Budget
@@ -191,10 +243,13 @@ class Journal:
 
 
     #helper funciton that applies the current filter and returns the resulting sublist 
-    def applyFilter(self):
-        if not self.curFilter:
-            return self.journal
-        subJournal = filter(self.curFilter.match, self.journal)
+    def applyFilter(self, tmpFilter = None):
+        if not tmpFilter:
+            if not self.curFilter:
+                return self.journal
+            subJournal = filter(self.curFilter.match, self.journal)
+        else:
+            subJournal = filter(tmpFilter.match, self.journal)
         return subJournal
 
     
