@@ -163,6 +163,7 @@ class Journal:
         if(res is not 0):
             self.editGenre(res-1)
 
+    #provides actual submenu for editing a genre
     def editGenre(self, genreIndex):
         print(str(genreIndex+1) + ".\t" + self.genres.keys().at(genreIndex) + "\tBudget: " + str(self.genres.values.at(genreIndex)) + "\n" +
               "\t0.\tBack\n" +
@@ -176,10 +177,18 @@ class Journal:
         elif(res == 2):
             if( "y" == str(input("Deleting a genre will delete all its associated digital reciepts. Are you sure you still want to delete it? (Y/N)\t")).lower()):
                 self.deleteGenre(genreIndex)
-        
+    
+    #deletes the genre in genres at the given index and all associated DigitalReciept objects in journal
     def deleteGenre(self, genreIndex):
         delGenre = self.genres.keys.at(genreIndex)
-        
+        i = 0
+        while i < len(self.journal):
+            if self.journal[i].genre == delGenre:
+                del self.journal[i]
+            else:
+                i = i+1
+        del self.genres[delGenre]
+
 
     #helper funciton that applies the current filter and returns the resulting sublist 
     def applyFilter(self):
