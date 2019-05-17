@@ -152,7 +152,34 @@ class Journal:
     #   1. Change Budget
     #   2. Delete Genre
     def editGenres(self):
-        pass
+        print("0.\tBack\n")
+        i = 1
+        for genre, bud in genres.items():
+            print(str(i) + ".", genre, "Budget: " + str(bud), sep = "\t", end = "\n")
+            i = i+1
+        
+        res = int(input("Enter a genre to edit. You may delete a Genre or modify its Budget:\t"))
+
+        if(res is not 0):
+            self.editGenre(res-1)
+
+    def editGenre(self, genreIndex):
+        print(str(genreIndex+1) + ".\t" + self.genres.keys().at(genreIndex) + "\tBudget: " + str(self.genres.values.at(genreIndex)) + "\n" +
+              "\t0.\tBack\n" +
+              "\t1.\tChange Budget\n" +
+              "\t2.\tDelete Genre\n")
+
+        res = int(input("Enter an option:\t"))
+        
+        if(res == 1):
+            self.genres[self.genres.keys.at(genreIndex)] = float(input("Please enter the new genre budget:\t"))
+        elif(res == 2):
+            if( "y" == str(input("Deleting a genre will delete all its associated digital reciepts. Are you sure you still want to delete it? (Y/N)\t")).lower()):
+                self.deleteGenre(genreIndex)
+        
+    def deleteGenre(self, genreIndex):
+        delGenre = self.genres.keys.at(genreIndex)
+        
 
     #helper funciton that applies the current filter and returns the resulting sublist 
     def applyFilter(self):
