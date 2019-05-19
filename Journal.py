@@ -1,4 +1,4 @@
-import DigitalReciept, functools, os, pickle
+import DigitalReciept, functools, pickle
 
 #journal will work similar to accounting journal, keep track of expenses and entries to different categories. Contains functions to get analytics from spendings
 class Journal:
@@ -48,7 +48,7 @@ class Journal:
     def searchReciept(self, filter):
         tmpJournal = applyFilter(tmpFilter = filter)
         res = -1
-        while res < 0 and res > len(tmpJournal):
+        while res < 0 or res > len(tmpJournal):
             print("0.\tCancel\n")
             i = 1
             for reciept in tmpJournal:

@@ -47,7 +47,7 @@ Commands (Non-Verbose):
         filter [ add | edit | set ]
             command routes to the add edit or set filter prompts
 
-        print 
+        print [--csv]
             prints the Journal
 
         sum 

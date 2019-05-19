@@ -200,6 +200,9 @@ class FilterReciept:
             finalString += " Keyword: {0:<50}".format(self.keyWord)
         return finalString
 
+    def __eq__(self, other):
+        return self.loCost == other.loCost and self.hiCost == other.hiCost and self.signCost == other.signCost and self.cardNum == other.cardNum and self.startDate == other.startDate and self.endDate == other.endDate and self.placeOfPurchase == other.placeOfPurchase and self.genre == other.genre and self.keyWord == other.keyWord
+
     def match(self, reciept):
         matches = True
         if self.startDate is not None:
