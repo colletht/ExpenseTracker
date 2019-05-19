@@ -330,6 +330,9 @@ class FilterReciept:
             elif option == 6:
                 self.queryKeyword()
 
+    def editFilter(self, genres):
+        
+
 def getLastMonthFilter():
     f = FilterReciept()
     f.startDate = date.today().replace(day=1) - timedelta(days=1)

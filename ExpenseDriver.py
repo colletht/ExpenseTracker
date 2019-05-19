@@ -6,9 +6,9 @@ class ExpenseDriver:
         #list of values for menu. this structure acts as a map that redirects the program to the appropriate functions
         #if a none value is present it means redirect and display the page at the index of the number at the current option
         self.__menu = [[("0.\tExit", self.__exit) , ("1.\tReciepts", None), ("2.\tGenres", None), ("3.\tFilters", None), ("4.\tAnalytics", None), ("5.\tGenerate a Report", None), ("6.\tSettings", None)], 
-                        [("0.\tBack", None), ("1.\tAdd a new Reciept", self.__addReciept), ("2.\tEdit an existing Reciept", self.__editReciept)],
-                        [("0.\tBack", None), ("1.\tAdd a new Genre", self.__addGenre), ("2.\tEdit your Genre Settings", self.__editGenre)],
-                        [("0.\tBack", None), ("1.\tAdd a new Filter", self.__addFilter), ("2.\tEdit your Filters", self.__editFilter), ("3.\tSet a Current Filter", self.__setFilter)],
+                        [("0.\tBack", None), ("1.\tAdd a new Reciept", self.curJournal.addReciept), ("2.\tEdit an existing Reciept", self.__editReciept)],
+                        [("0.\tBack", None), ("1.\tAdd a new Genre", self.curJournal.addGenre), ("2.\tEdit your Genre Settings", self.curJournal.editGenres)],
+                        [("0.\tBack", None), ("1.\tAdd a new Filter", self.curJournal.addFilter), ("2.\tEdit your Filters", self.__editFilter), ("3.\tSet a Current Filter", self.__setFilter)],
                         [("0.\tBack", None), ("1.\tPrint your Journal", self.__printJournal), ("2.\tView Journal Sum", self.__sumJournal), ("3.\tView Journal Averages", self.__averageJournal)],
                         None,
                         None]
@@ -50,7 +50,6 @@ class ExpenseDriver:
         else:
             return self.__createFile()
 
-      
     def __createFile(self):
         filename = input("Please enter the name of your new journal:\t") + ".pkl"
         while(not is_valid_filename(filename)):
@@ -126,6 +125,13 @@ class ExpenseDriver:
         except:
             print("Please enter an integer argument.")
             self._ExpenseDriver__exit()
+
+        self.curJournal.addReciept()
+
+    def __editReciept(self):
+        print("Create a temporary filter to narrow our search.")
+        self.curJournal.editReciept(self.curJournal.search(self.curJournal.temporaryFilter()))
+        
 
     def REPL(self):
         run = True
