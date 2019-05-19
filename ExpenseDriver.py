@@ -3,10 +3,6 @@ from pathvalidate import is_valid_filename
 
 class ExpenseDriver:
     def __init__(self):
-        print("initializing environment...")
-
-
-
         #list of values for menu. this structure acts as a map that redirects the program to the appropriate functions
         #if a none value is present it means redirect and display the page at the index of the number at the current option
         self.__menu = [[("0.\tExit", self.__exit) , ("1.\tReciepts", None), ("2.\tGenres", None), ("3.\tFilters", None), ("4.\tAnalytics", None), ("5.\tGenerate a Report", None), ("6.\tSettings", None)], 
@@ -28,27 +24,33 @@ class ExpenseDriver:
             open(os.path.join("C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles", filename),"r").close()
             self.curFile = filename
 
-            
+
         #case files in appfiles == user has created journals, must select a journal to load or create a  new one
         else:
-            res = -1
-            while res < 0 or res > len(os.listdir("C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles")):
-                print("0.\tNew File.")
-                i = 1
-                for fName in os.listdir("C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles"):
-                    print(i + ".\t" + fName + ".")
-                    i = i + 1
-
-                res = int(input("Please select which file you would like to load your journal from:\t"))
-            
-            if res is not 0:
-                self.curFile = os.listdir("C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles")[res-1]
+            self.curFile = self._ExpenseDriver__selectFile()
+            if os.stat("file").st_size is not 0:
                 with open(os.path.join("C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles", self.curFile),"rb") as infile:
                     self.curJournal = pickle.load(infile)
                     print("succesfully loaded journal from file " + self.curFile, end = ".")
-            else:
-                self.curFile = self.__createFile()
+
+    #walks user through selecting from existing files in directory or creating a new file, return the name of the file created
+    def __selectFile(self):
+        res = -1
+        while res not in range(0, len(os.listdir("C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles"))):
+            print("0.\tNew File.")
+            i = 1
+            for fName in os.listdir("C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles"):
+                print(i + ".\t" + fName + ".")
+                i = i + 1
+
+            res = int(input("Please select which file you would like to load your journal from:\t"))
             
+        if res is not 0:
+            return os.listdir("C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles")[res-1]
+        else:
+            return self.__createFile()
+
+      
     def __createFile(self):
         filename = input("Please enter the name of your new journal:\t") + ".pkl"
         while(not is_valid_filename(filename)):
@@ -95,6 +97,35 @@ class ExpenseDriver:
             #current option failed so recursively call the same function and try again
             print("Please enter an integer argument.")
             return self._ExpenseDriver__getMenuOption(subMenu = subMenu)
+
+    #performs all necessary procedures to exit the program, namely saving the journal into the default, or entered by user, file
+    def __exit(self):
+        try:
+            print("Will save your journal to \"" + self.curFile + "\"",
+                    "0.\tDon't Save",
+                    "1.\tOK",
+                    "2.\tChoose another File", sep = "\n", end = "\n")
+            res = int(input(self._ExpenseDriver__getPrompt()))
+
+            while res not in range(0,3):
+                print("Will save your journal to \"" + self.curFile + "\"",
+                        "0.\tDon't Save",
+                        "1.\tOK",
+                        "2.\tChoose another File", sep = "\n", end = "\n")
+                res = int(input(self._ExpenseDriver__getPrompt()))
+
+            if res is 0:
+                return False
+            elif res is 1:
+                self.curJournal.writeJournal(os.path.join("C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles", self.curFile))
+                return True
+            else:
+                self.curJournal.writeJournal(os.path.join("C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles", self._ExpenseDriver__selectFile()))
+                return True
+
+        except:
+            print("Please enter an integer argument.")
+            self._ExpenseDriver__exit()
 
     def REPL(self):
         run = True
