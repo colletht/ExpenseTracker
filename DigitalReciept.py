@@ -96,16 +96,23 @@ class DigitalReciept:
                 print("Enter a number")
 
     def queryGenre(self, genres):
-        while True:
-            try:
-                i = 1
+        try:
+            i = 1
+            for x in genres:
+                print(i, x, sep = '\t', end = '\n')
+                i+=1
+            res = int(input("Select a genre by number:\t")) - 1
+
+            while res not in range(0, len(genres)):
                 for x in genres:
                     print(i, x, sep = '\t', end = '\n')
                     i+=1
-                self.genre = genres[int(input("Select a genre by number:\t"))-1]
-                break
-            except:
-                print("Please enter a number corresponding to a genre on the screen.")
+                res = int(input("Select a genre by number:\t")) - 1
+
+            self.genre = genres[res]
+        except:
+            print("Please enter a number corresponding to a genre on the screen.")
+            self.queryGenre(genres)
 
     def queryPlace(self):
         self.placeOfPurchase = input("Enter location of purchase:\t")
@@ -288,17 +295,24 @@ class FilterReciept:
         self.placeOfPurchase = input("Enter Place of Purchase: \t")
         
     def queryGenre(self, genres):
-        while True:
-            try:
-                i = 1
+        try:
+            i = 1
+            for x in genres:
+                print(i, x, sep = '\t', end = '\n')
+                i+=1
+            res = int(input("Select a genre by number:\t"))
+
+            while res not in range(0, len(genres)):
                 for x in genres:
                     print(i, x, sep = '\t', end = '\n')
                     i+=1
-                self.genre = genres[int(input("Select a genre by number:\t"))-1]
-                break
-            except:
-                print("Please enter a number corresponding to a genre on the screen.")
+                res = int(input("Select a genre by number:\t"))
 
+            self.genre = genres[res - 1]
+        except:
+            print("Please enter a number corresponding to a genre on the screen.")
+            self.queryGenre(genres)
+        
     def queryKeyword(self):
         self.keyWord = input("Enter keyword:\t\t")
 
@@ -330,7 +344,7 @@ class FilterReciept:
             elif option == 6:
                 self.queryKeyword()
 
-    def editFilter(self, genres):
+    #def editFilter(self, genres):
         
 
 def getLastMonthFilter():

@@ -7,7 +7,7 @@ class Journal:
         self.budget = 0
         self.genres = genreList
         self.curFilter = None   
-        self.filters = {}    #will hold dictionary of saved filters and their names, filters are FilterReciept objects with special values to be evauluated by the matches filter function
+        self.filters = {'ALL':None}    #will hold dictionary of saved filters and their names, filters are FilterReciept objects with special values to be evauluated by the matches filter function
     
     #prompts for value for a budget
     def queryBudget(self):
@@ -19,17 +19,6 @@ class Journal:
             except:
                 print("Please enter a valid value for a budget")
         
-    #adds a new genre to the genre list
-    def addGenre(self):
-        res = input("Enter the name of your new genre:\t")
-        if res.lower() in list(map(lambda x: x.lower(), self.genres.keys())):
-            print("You must enter a genre does not yet exist")
-            return False
-        else:
-            newBudget = self.queryBudget()
-            self.genres[res.strip()] = newBudget
-            return True
-
     def writeJournal(self,file):
         with open(file,"wb") as output:
             pickle.dump(self,output,-1)
@@ -39,18 +28,16 @@ class Journal:
 
     def addReciept(self):
         p = DigitalReciept.DigitalReciept()
-        p.fillReciept(self.genres.keys())
-        self.journal += p
+        p.fillReciept(list(self.genres.keys()))
+        self.journal.append(p)
         self.journal.sort()
+
+        return True
         #TODO: inefficient: figure out an insert in order way rather than needlessly sorting list every time
 
-    #gets a temporary filter
-    def temporaryFilter(self):
-        return DigitalReciept.FilterReciept().fillFilter(self.genres)
-
     #searches for a reciept based on the given filter. Returns the reciept if found, returns None if cancel is entered
-    def searchReciept(self, filter):
-        tmpJournal = self._Journal__applyFilter(tmpFilter = filter)
+    def searchReciept(self, filt = self.curFilter):
+        tmpJournal = self._Journal__applyFilter(filt = filt)
         res = -1
         while res not in range(0, len(tmpJournal)):
             print("0.\tCancel\n")
@@ -67,7 +54,7 @@ class Journal:
 
     #allows user to edit a reciept that has been searched for
     def editReciept(self, reciept):
-        reciept.editReciept(self.genres.keys())
+        reciept.editReciept(list(self.genres.keys()))
 
     #guides the user through adding a new filter to the filters dicitonary and asks if it should be set to the current filter
     def addFilter(self):
@@ -75,11 +62,16 @@ class Journal:
         while name in self.filters.keys():
             name = input('Please select a name for the new filter that is not already a filter name:\t')
         f = DigitalReciept.FilterReciept()
-        f.fillFilter(self.genres.keys())
+        f.fillFilter(list(self.genres.keys()))
         self.filters[name] = f
-        res = input('Would you like to set this as the current filter?\t')
+        res = input('Would you like to set this as the current filter? (Y/N)\t')
         if res.lower()[0] == 'y':
             self.curFilter = f 
+        return True
+
+    #gets a temporary filter
+    def temporaryFilter(self):
+        return DigitalReciept.FilterReciept().fillFilter(self.genres)
 
     def editFilters(self):
         try:
@@ -109,6 +101,16 @@ class Journal:
     def __editFilter(self, filterIndex):
         pass
 
+    def __deleteFilter(self, filterIndex):
+        pass
+
+    #helper funciton that applies the current filter and returns the resulting sublist 
+    def __applyFilter(self, filt = self.curFilter):
+        if not filt:
+            return self.journal
+        subJournal = filter(filt.match, self.journal)
+        return subJournal
+
     #TODO: implement edit filter funcitonality in journal.py and DigitalReciept.py and polish up ExpenseDriver.py
 
     #sets the current filter from a name in the filters dicitonary unless the name is not there then it prints an error
@@ -122,23 +124,16 @@ class Journal:
 
     #prints the journal, if a filter is passed it it is set to the current filter for the duration of the function, if a cur filter is set then it filters
     #off of that otherwise it prints the entire contents
-    def printJournal(self, filter = None):
-        if filter and isinstance(filter, str) and filter in self.filters.keys():
-            self.curFilter = self.filters[filter]
-        tmpJournal = self._Journal__applyFilter()
+    def printJournal(self, filt = self.curFilter):
+        tmpJournal = self._Journal__applyFilter(filt = filt)
 
         for reciept in tmpJournal:
             print(reciept)
-        #if a temporary filter was passed in erase it afte rthe funciton
-        if filter:
-            self.curFilter = None
         
     #sums the journal, using the same methods for filtering as printJournal. Gives the user the option
     #to sum regardless of sign and purely on magnitude or regarding sign and based off net costs
-    def sumJournal(self, filter = None):
-        if filter and isinstance(filter, str) and filter in self.filters.keys():
-            self.curFilter = self.filters[filter]
-        tmpJournal = self._Journal__applyFilter()
+    def sumJournal(self, filt = self.curFilter):
+        tmpJournal = self._Journal__applyFilter(filt = filt)
 
         sum = 0.0
         res = input("Sum unbiased (ignore sign) or biased (include sign)?")
@@ -150,17 +145,11 @@ class Journal:
             for reciept in tmpJournal:
                 sum = sum + reciept.getRealCost()
             print("The biased sum (considerate of sign) is:\t" + sum)
-
-        #if a temporary filter was passed in erase it afte rthe funciton
-        if filter:
-            self.curFilter = None
     
     #averages the journal, using the same methods for filtering as printJournal. Gives the user the option
     #to saverage regardless of sign and purely on magnitude or regarding sign and based off net costs
-    def averageJournal(self, filter = None):
-        if filter and isinstance(filter, str) and filter in self.filters.keys():
-            self.curFilter = self.filters[filter]
-        tmpJournal = self._Journal__applyFilter()
+    def averageJournal(self, filt = self.curFilter):
+        tmpJournal = self._Journal__applyFilter(filt = filt)
 
         sum = 0.0
         res = input("Average unbiased (ignore sign) or biased (include sign)?")
@@ -174,10 +163,6 @@ class Journal:
                 sum = sum + reciept.getRealCost()
             sum = sum/len(tmpJournal)
             print("The biased average (considerate of sign) is:\t" + sum)
-
-        #if a temporary filter was passed in erase it afte rthe funciton
-        if filter:
-            self.curFilter = None
 
     #generates a report of the journal based off of given filter. A report includes:
     #   Journal Budget
@@ -200,7 +185,7 @@ class Journal:
             print("--------------------\n" + 
                   " LAST MONTHS REPORT \n" + 
                   "--------------------\n")
-            tmpJournal = self._Journal__applyFilter(tmpFilter = DigitalReciept.getLastMonthFilter())
+            tmpJournal = self._Journal__applyFilter(filt = DigitalReciept.getLastMonthFilter())
         
         balance = 0.0
         sum = 0.0
@@ -247,6 +232,17 @@ class Journal:
         print("    AVERAGE DAILY EXPENDITURE:\t${0:>8.2f}".format(balance/len(tmpJournal)), end = "\n")
         print("    MINIMUM RECIEPT:\t" + str(minReciept), end = "\n")
         print("    MAXIMUM RECIEPT:\t" + str(maxReciept), end = "\n")
+   
+    #adds a new genre to the genre list
+    def addGenre(self):
+        res = input("Enter the name of your new genre:\t")
+        if res.lower() in list(map(lambda x: x.lower(), self.genres.keys())):
+            print("You must enter a genre does not yet exist")
+            return False
+        else:
+            newBudget = self.queryBudget()
+            self.genres[res.strip()] = newBudget
+            return True
 
     #provides menu interface to edit individual genres. You have two options when editing a genre:
     #   1. Change Budget
@@ -315,15 +311,5 @@ class Journal:
             else:
                 i = i+1
         del self.genres[delGenre]
-
-    #helper funciton that applies the current filter and returns the resulting sublist 
-    def __applyFilter(self, tmpFilter = None):
-        if not tmpFilter:
-            if not self.curFilter:
-                return self.journal
-            subJournal = filter(self.curFilter.match, self.journal)
-        else:
-            subJournal = filter(tmpFilter.match, self.journal)
-        return subJournal
 
     
