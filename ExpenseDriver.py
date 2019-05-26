@@ -9,10 +9,10 @@ class ExpenseDriver:
         #list of values for menu. this structure acts as a map that redirects the program to the appropriate functions
         #if a none value is present it means redirect and display the page at the index of the number at the current option
         self.curJournal = Journal()
-        self.__menu = [[("0.\tExit", self.__exit) , ("1.\tReciepts", None), ("2.\tGenres", None), ("3.\tFilters", None), ("4.\tAnalytics", None), ("5.\tGenerate a Report", None), ("6.\tSettings", None)], 
-                        [("0.\tBack", None), ("1.\tAdd a new Reciept", self.curJournal.addReciept), ("2.\tEdit an existing Reciept", self.__editReciept)],
-                        [("0.\tBack", None), ("1.\tAdd a new Genre", self.__addGenre), ("2.\tEdit your Genre Settings", self.curJournal.editGenres)],
-                        [("0.\tBack", None), ("1.\tAdd a new Filter", self.curJournal.addFilter), ("2.\tEdit your Filters", self.__editFilter), ("3.\tSet a Current Filter", self.__setFilter)],
+        self.__menu = [[("0.\tExit", self.__exit) , ("1.\tReciepts", None), ("2.\tGenres", None), ("3.\tFilters", None), ("4.\tAnalytics", None), ("5.\tGenerate a Report", self._ExpenseDriver__generateReport), ("6.\tSettings", None)], 
+                        [("0.\tBack", None), ("1.\tAdd a new Reciept", self.__addReciept), ("2.\tEdit an existing Reciept", self.__editReciept)],
+                        [("0.\tBack", None), ("1.\tAdd a new Genre", self.__addGenre), ("2.\tEdit your Genre Settings", self.__editGenre)],
+                        [("0.\tBack", None), ("1.\tAdd a new Filter", self.__addFilter), ("2.\tEdit your Filters", self.__editFilter), ("3.\tSet a Current Filter", self.__setFilter)],
                         [("0.\tBack", None), ("1.\tPrint your Journal", self.__printJournal), ("2.\tView Journal Sum", self.__sumJournal), ("3.\tView Journal Averages", self.__averageJournal)],
                         None,
                         None]
@@ -35,7 +35,7 @@ class ExpenseDriver:
             if os.stat(os.path.join(PATH_TO_APPFILES, self.curFile)).st_size is not 0:
                 with open(os.path.join(PATH_TO_APPFILES, self.curFile),"rb") as infile:
                     self.curJournal = pickle.load(infile)
-                    print("succesfully loaded journal from file " + self.curFile, end = ".")
+                    print("Succesfully loaded journal from file " + self.curFile, end = ".\n")
 
     #walks user through selecting from existing files in directory or creating a new file, return the name of the file created
     def __selectFile(self):
@@ -54,7 +54,7 @@ class ExpenseDriver:
                 return os.listdir(PATH_TO_APPFILES)[res-1]
             else:
                 return self.__createFile()
-        except:
+        except ValueError:
             print("Please enter an integer argument.")
             return self._ExpenseDriver__selectFile()
 
@@ -76,9 +76,8 @@ class ExpenseDriver:
     def __getPrompt(self):
         promptString = self.curFile[0:-4]
         if self.curJournal.curFilter:
-            for key, value in self.curJournal.filters.items():
-                if value == self.curJournal.curFilter:
-                    promptString += " - Filtering by: \"" + str(key) + "\""
+            promptString += " - Filtering by: \"" + str(self.curJournal.curFilter[0]) + "\""
+            
         promptString += " >>>\t"
         return promptString
 
@@ -101,7 +100,7 @@ class ExpenseDriver:
                 #if there is no argument that means we still need to traverse the menu so recursively call the function
                 return self._ExpenseDriver__getMenuOption(subMenu = res)
 
-        except:
+        except ValueError:
             #current option failed so recursively call the same function and try again
             print("Please enter an integer argument.")
             return self._ExpenseDriver__getMenuOption(subMenu = subMenu)
@@ -129,7 +128,7 @@ class ExpenseDriver:
 
             #indicate that exit has been ran by returning false, thus terminating the loop in REPL
             return False
-        except:
+        except ValueError:
             print("Please enter an integer argument.")
             return self._ExpenseDriver__exit()
 
@@ -137,25 +136,50 @@ class ExpenseDriver:
         self.curJournal.addGenre()
         return True
 
+    def __editGenre(self):
+        self.curJournal.editGenres()
+        return True
+
+    def __addReciept(self):
+        self.curJournal.addReciept()
+        return True
+
     def __editReciept(self):
         print("Create a temporary filter to narrow our search.")
         self.curJournal.editReciept(self.curJournal.searchReciept(self.curJournal.temporaryFilter()))
         return True
         
+    def __addFilter(self):
+        self.curJournal.addFilter()
+        return True
+
     def __editFilter(self):
-        pass
+        self.curJournal.editFilters()
+        return True
 
     def __setFilter(self):
-        pass
+        self.curJournal.setFilter()
+        return True
 
     def __printJournal(self):
-        pass
+        self.curJournal.printJournal(filt = self.curJournal.curFilter)
+        print()
+        return True
 
     def __sumJournal(self):
-        pass
+        self.curJournal.sumJournal(filt = self.curJournal.curFilter)
+        print()
+        return True
 
     def __averageJournal(self):
-        pass    
+        self.curJournal.averageJournal(filt = self.curJournal.curFilter)
+        print()
+        return True
+
+    #TODO: add future functionality for different time spans
+    def __generateReport(self):
+        self.curJournal.generateReport()
+        return True
 
     def REPL(self):
         run = True

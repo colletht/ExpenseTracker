@@ -67,7 +67,7 @@ class DigitalReciept:
     #query functions defined here: each function queries an attribute from the terminal user, modulated into functions to make future error checking easier
     def queryDate(self):
         success = False
-        while success == False:
+        while not success:
             try:
                 dateStr = input("Enter the date of purchase:\t")
                 patt = re.search(r'(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})',dateStr)
@@ -88,10 +88,11 @@ class DigitalReciept:
             self.signCost = 1
         else:
             self.signCost = -1
-        while True:
+        err = True
+        while err:
             try:
                 self.cost = float(input("Enter the cost accrued:\t\t$"))
-                break
+                err = False
             except:
                 print("Enter a number")
 
@@ -122,32 +123,36 @@ class DigitalReciept:
 
     #edits the member data of a Digital Reciept Object, allows for user choice of which fields to edit
     def editReciept(self, genres):
-        option = 0
-        while option is not 7:
+        try:
             option = 0
-            while option < 1 or option > 7:
-                print(self)
-                print("What field do you wish to edit:",
-                    "1. Date of Purchase",
-                    "2. Card Number",
-                    "3. Cost",
-                    "4. Genre",
-                    "5. Place of Purchase",
-                    "6. Notes",
-                    "7. Done", sep = '\n',)
-                option = int(input(">> "))
-            if option == 1:
-                self.queryDate()
-            elif option == 2:
-                self.queryCardNum()
-            elif option == 3:
-                self.queryCost()
-            elif option == 4:
-                self.queryGenre(genres)
-            elif option == 5:
-                self.queryPlace()
-            else:
-                self.queryInfo()
+            while option is not 7:
+                option = 0
+                while option < 1 or option > 7:
+                    print(self)
+                    print("What field do you wish to edit:",
+                        "1. Date of Purchase",
+                        "2. Card Number",
+                        "3. Cost",
+                        "4. Genre",
+                        "5. Place of Purchase",
+                        "6. Notes",
+                        "7. Done", sep = '\n',)
+                    option = int(input(">>> "))
+                if option == 1:
+                    self.queryDate()
+                elif option == 2:
+                    self.queryCardNum()
+                elif option == 3:
+                    self.queryCost()
+                elif option == 4:
+                    self.queryGenre(genres)
+                elif option == 5:
+                    self.queryPlace()
+                elif option == 6:
+                    self.queryInfo()
+        except ValueError:
+            print("Please enter an integer argument.")
+            editReciept(genres)
 
     #fills the reciept in case any missing data was not provided in the constructor
     def fillReciept(self, genres):
@@ -233,6 +238,7 @@ class FilterReciept:
         return matches
 
     def queryCost(self):
+        err = True
         x = input("Filter by Debit/Credit (Enter for none)? (D/C)\t")
         while x is not "D" and x is not "C" and x is not "N":
             x = input("Filter by Debit/Credit (Enter for none)? (D/C)\t")
@@ -240,21 +246,22 @@ class FilterReciept:
             self.signCost = 1
         elif x is "C":
             self.signCost = -1
-        while True:
+        while err:
             try:
                 x = input("Enter low range value (Press enter for none):\t")
                 if x is not '':
                     self.loCost = float(x)
-                break
-            except:
+                err = False
+            except ValueError:
                 print("Enter a number")
-        while True:
+        err = True
+        while err:
             try:
                 x = input("Enter high range value (Press enter for none):\t")
                 if x is not '':
                     self.hiCost = float(x)
-                break
-            except:
+                err = False
+            except ValueError:
                 print("Enter a number")
 
     def queryCardNum(self):
@@ -309,7 +316,7 @@ class FilterReciept:
                 res = int(input("Select a genre by number:\t"))
 
             self.genre = genres[res - 1]
-        except:
+        except ValueError:
             print("Please enter a number corresponding to a genre on the screen.")
             self.queryGenre(genres)
         
@@ -317,35 +324,36 @@ class FilterReciept:
         self.keyWord = input("Enter keyword:\t\t")
 
     def fillFilter(self, genres):
-        option = 0
-        while option is not 7:
+        try:
             option = 0
-            while option < 1 or option > 7:
-                print("What fields would you like to filter by:",
-                    "1. Date of Purchase",
-                    "2. Card Number",
-                    "3. Cost",
-                    "4. Genre",
-                    "5. Place of Purchase",
-                    "6. Keyword",
-                    "7. Done", sep = '\n',)
-                option = int(input(">> "))
+            while option is not 7:
+                option = 0
+                while option not in range(1,8):
+                    print("What fields would you like to filter by:",
+                        "1. Date of Purchase",
+                        "2. Card Number",
+                        "3. Cost",
+                        "4. Genre",
+                        "5. Place of Purchase",
+                        "6. Keyword",
+                        "7. Done", sep = '\n',)
+                    option = int(input(">>> "))
 
-            if option == 1:
-                self.queryDate()
-            elif option == 2:
-                self.queryCardNum()
-            elif option == 3:
-                self.queryCost()
-            elif option == 4:
-                self.queryGenre(genres)
-            elif option == 5:
-                self.queryPlace()
-            elif option == 6:
-                self.queryKeyword()
-
-    #def editFilter(self, genres):
-        
+                if option == 1:
+                    self.queryDate()
+                elif option == 2:
+                    self.queryCardNum()
+                elif option == 3:
+                    self.queryCost()
+                elif option == 4:
+                    self.queryGenre(genres)
+                elif option == 5:
+                    self.queryPlace()
+                elif option == 6:
+                    self.queryKeyword()      
+        except ValueError:
+            print("Please enter an integer argument.")
+            self.fillFilter(genres)
 
 def getLastMonthFilter():
     f = FilterReciept()
