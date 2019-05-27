@@ -1,3 +1,5 @@
+#!PYTHON
+
 import os, pickle
 from pathvalidate import is_valid_filename
 from Journal import Journal
@@ -10,7 +12,7 @@ class ExpenseDriver:
         #if a none value is present it means redirect and display the page at the index of the number at the current option
         self.curJournal = Journal()
         self.__menu = [[("0.\tExit", self.__exit) , ("1.\tReciepts", None), ("2.\tGenres", None), ("3.\tFilters", None), ("4.\tAnalytics", None), ("5.\tGenerate a Report", self._ExpenseDriver__generateReport), ("6.\tSettings", None)], 
-                        [("0.\tBack", None), ("1.\tAdd a new Reciept", self.__addReciept), ("2.\tEdit an existing Reciept", self.__editReciept)],
+                        [("0.\tBack", None), ("1.\tAdd a new Reciept", self.__addReciept), ("2.\tEdit an existing Reciept", self.__editReciept), ("3.\tDelete a Reciept", self.__deleteReciept)],
                         [("0.\tBack", None), ("1.\tAdd a new Genre", self.__addGenre), ("2.\tEdit your Genre Settings", self.__editGenre)],
                         [("0.\tBack", None), ("1.\tAdd a new Filter", self.__addFilter), ("2.\tEdit your Filters", self.__editFilter), ("3.\tSet a Current Filter", self.__setFilter)],
                         [("0.\tBack", None), ("1.\tPrint your Journal", self.__printJournal), ("2.\tView Journal Sum", self.__sumJournal), ("3.\tView Journal Averages", self.__averageJournal)],
@@ -64,6 +66,7 @@ class ExpenseDriver:
             filename = input("Please enter a valid filename:\t") + ".pkl"
         #create file
         open(os.path.join(PATH_TO_APPFILES, filename),"w+").close()
+        print("Succesfully created save file for " + str(filename[0:-4]))
         return filename
 
     #prints to the console the menu. SubMenu represents the level of the menu, -1 represents head menu, see plan.txt for menu structure
@@ -92,6 +95,7 @@ class ExpenseDriver:
             while res not in range(0,len(self._ExpenseDriver__menu[subMenu])):
                 self._ExpenseDriver__printMenu(subMenu = subMenu)
                 res = int(input(self._ExpenseDriver__getPrompt()))
+                print()
 
             if self._ExpenseDriver__menu[subMenu][res][-1]:
                 #if there is a function return it so that it may be executed
@@ -108,14 +112,14 @@ class ExpenseDriver:
     #performs all necessary procedures to exit the program, namely saving the journal into the default, or entered by user, file
     def __exit(self):
         try:
-            print("Will save your journal to \"" + self.curFile[0:-4] + "\"",
+            print("Save your journal to \"" + self.curFile[0:-4] + "\"",
                     "0.\tDon't Save",
                     "1.\tOK",
                     "2.\tChoose another File", sep = "\n", end = "\n")
             res = int(input(self._ExpenseDriver__getPrompt()))
 
             while res not in range(0,3):
-                print("Will save your journal to \"" + self.curFile[0:-4] + "\"",
+                print("Save your journal to \"" + self.curFile[0:-4] + "\"",
                         "0.\tDon't Save",
                         "1.\tOK",
                         "2.\tChoose another File", sep = "\n", end = "\n")
@@ -123,7 +127,7 @@ class ExpenseDriver:
 
             if res is 1:
                 self.curJournal.writeJournal(os.path.join(PATH_TO_APPFILES, self.curFile))
-            else:
+            elif res is not 0:
                 self.curJournal.writeJournal(os.path.join(PATH_TO_APPFILES, self._ExpenseDriver__selectFile()))
 
             #indicate that exit has been ran by returning false, thus terminating the loop in REPL
@@ -148,7 +152,13 @@ class ExpenseDriver:
         print("Create a temporary filter to narrow our search.")
         self.curJournal.editReciept(self.curJournal.searchReciept(self.curJournal.temporaryFilter()))
         return True
-        
+
+    def __deleteReciept(self):
+        print("Create a temporary filter to narrow our search.")
+        self.curJournal.deleteReciept(self.curJournal.searchReciept(self.curJournal.temporaryFilter()))
+        return True
+
+
     def __addFilter(self):
         self.curJournal.addFilter()
         return True
@@ -162,16 +172,28 @@ class ExpenseDriver:
         return True
 
     def __printJournal(self):
+        if self.curJournal.size() is 0:
+            print("You don't have any reciepts to display yet. Add some!")
+            return True
+
         self.curJournal.printJournal(filt = self.curJournal.curFilter)
         print()
         return True
 
     def __sumJournal(self):
+        if self.curJournal.size() is 0:
+            print("You don't have any reciepts to sum yet. Add some!")
+            return True
+
         self.curJournal.sumJournal(filt = self.curJournal.curFilter)
         print()
         return True
 
     def __averageJournal(self):
+        if self.curJournal.size() is 0:
+            print("You don't have any reciepts to average yet. Add some!")
+            return True
+
         self.curJournal.averageJournal(filt = self.curJournal.curFilter)
         print()
         return True

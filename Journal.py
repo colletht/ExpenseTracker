@@ -9,6 +9,9 @@ class Journal:
         self.curFilter = None   #holds tuple (<filter name>, <filter value>)
         self.filters = {}    #will hold dictionary of saved filters and their names, filters are FilterReciept objects with special values to be evauluated by the matches filter function
     
+    def size(self):
+        return len(self.journal)
+
     #prompts for value for a budget
     def queryBudget(self):
         try:
@@ -43,7 +46,7 @@ class Journal:
         try:
             tmpJournal = self._Journal__applyFilter(filt = filt)
             res = -1
-            while res not in range(0, len(tmpJournal)):
+            while res not in range(0, len(tmpJournal) + 1):
                 print("0.\tCancel\n")
                 i = 1
                 for reciept in tmpJournal:
@@ -62,6 +65,11 @@ class Journal:
     #allows user to edit a reciept that has been searched for
     def editReciept(self, reciept):
         reciept.editReciept(list(self.genres.keys()))
+
+    def deleteReciept(self,reciept):
+        for x in range(0,len(self.journal)):
+            if self.journal[x] == reciept:
+                del self.journal[x]
 
     #guides the user through adding a new filter to the filters dicitonary and asks if it should be set to the current filter
     def addFilter(self):
@@ -332,16 +340,17 @@ class Journal:
                 res = int(input("Enter a genre to edit. You may delete a Genre or modify its Budget:\t"))
 
             if(res is not 0):
-                self.__editGenre(res-1)
+                self.__editGenre(list(self.genres.keys())[res-1])
 
         except ValueError:
             print("Please enter an integer argument.")
             self.editGenres()
 
     #provides actual submenu for editing a genre
-    def __editGenre(self, genreIndex):
+    def __editGenre(self, genre):
         try:
-            print(str(genreIndex+1) + ".\t" + self.genres.keys().at(genreIndex) + "\tBudget: " + str(self.genres.values.at(genreIndex)) + "\n" +
+
+            print(genre + "\tBudget: " + str(self.genres[genre]) + "\n" +
                     "\t0.\tBack\n" +
                     "\t1.\tChange Budget\n" +
                     "\t2.\tDelete Genre\n")
@@ -349,7 +358,7 @@ class Journal:
             res = int(input("Enter an option:\t"))
         
             while res not in range(0,3):
-                print(str(genreIndex+1) + ".\t" + self.genres.keys().at(genreIndex) + "\tBudget: " + str(self.genres.values.at(genreIndex)) + "\n" +
+                print(genre + "\tBudget: " + str(self.genres[genre]) + "\n" +
                         "\t0.\tBack\n" +
                         "\t1.\tChange Budget\n" +
                         "\t2.\tDelete Genre\n")
@@ -357,24 +366,23 @@ class Journal:
                 res = int(input("Enter an option:\t"))
 
             if(res == 1):
-                self.genres[self.genres.keys.at(genreIndex)] = float(input("Please enter the new genre budget:\t"))
+                self.genres[genre] = float(input("Please enter the new genre budget:\t"))
             elif(res == 2):
                 if( "y" == str(input("Deleting a genre will delete all its associated digital reciepts. Are you sure you still want to delete it? (Y/N)\t")).lower()):
-                    self.__deleteGenre(genreIndex)
+                    self.__deleteGenre(genre)
         
         except ValueError:
             print("Please enter an integer argument.")
-            self._Journal__editGenre(genreIndex)
+            self._Journal__editGenre(genre)
     
     #deletes the genre in genres at the given index and all associated DigitalReciept objects in journal
-    def __deleteGenre(self, genreIndex):
-        delGenre = self.genres.keys.at(genreIndex)
+    def __deleteGenre(self, genre):
         i = 0
         while i < len(self.journal):
-            if self.journal[i].genre == delGenre:
+            if self.journal[i].genre == genre:
                 del self.journal[i]
             else:
                 i = i+1
-        del self.genres[delGenre]
+        del self.genres[genre]
 
     
