@@ -357,7 +357,12 @@ class FilterReciept:
 
 def getLastMonthFilter():
     f = FilterReciept()
-    f.startDate = date.today().replace(day=1) - timedelta(days=1)
+    f.startDate = date.today().replace(day=2) - timedelta(days=1)
+    return f
+
+def getLastYearFilter():
+    f = FilterReciept()
+    f.startDate = date.today().replace(month=1, day=2) - timedelta(days = 1)
     return f
 
 #TODO: make all query functions error proof so code does not break if incorrect input is entered
