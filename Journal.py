@@ -90,7 +90,7 @@ class Journal:
 
     def editFilters(self):
         try:
-            print("0.\tBack\n")
+            print("0.\tBack")
             i = 1
             for name, filt in self.filters.items():
                 print(str(i) + ".", name + ":", str(filt), sep = "\t", end = "\n")
@@ -148,12 +148,12 @@ class Journal:
     def __applyFilter(self, filt = None):
         if not filt:
             return self.journal
-        subJournal = filter(filt[-1].match, self.journal)
+        subJournal = list(filter(filt[-1].match, self.journal))
         return subJournal
 
     def setFilter(self):
         try:
-            print("0.\tBack\n" + "1.\tNo Filter\n")
+            print("0.\tBack\n" + "1.\tNo Filter")
             i = 2
             for name, filt in self.filters.items():
                 print(str(i) + ".", name + ":", str(filt), sep = "\t", end = "\n")
@@ -254,15 +254,22 @@ class Journal:
     #       Max Reciept
     #   
     def generateReport(self, timeUnit = "m"):
+        f = None
         if "m" == timeUnit:
             print("--------------------\n" + 
                   " LAST MONTHS REPORT \n" + 
                   "--------------------\n")
-            tmpJournal = self._Journal__applyFilter(filt = ("Last Month", DigitalReciept.getLastMonthFilter()))
-        
+        f = ("Last Month", DigitalReciept.getLastMonthFilter())
+        tmpJournal = self._Journal__applyFilter(filt = f)
+        if tmpJournal == []:
+            print("You don't have any data to report yet. Add some reciepts now!\n")
+            return
+
+        print(tmpJournal) 
         balance = 0.0
         sum = 0.0
-        minReciept = maxReciept = tmpJournal[0]
+        minReciept = tmpJournal[0]
+        maxReciept = tmpJournal[0]
         for reciept in tmpJournal:
             balance = balance + reciept.getRealCost()
             sum = sum + reciept.getCost()

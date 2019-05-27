@@ -90,6 +90,7 @@ class ExpenseDriver:
             #get the option from the user
             self._ExpenseDriver__printMenu(subMenu = subMenu)
             res = int(input(self._ExpenseDriver__getPrompt()))
+            print()
 
             #make sure res is a in the range of the possible options
             while res not in range(0,len(self._ExpenseDriver__menu[subMenu])):
@@ -157,7 +158,6 @@ class ExpenseDriver:
         print("Create a temporary filter to narrow our search.")
         self.curJournal.deleteReciept(self.curJournal.searchReciept(self.curJournal.temporaryFilter()))
         return True
-
 
     def __addFilter(self):
         self.curJournal.addFilter()
