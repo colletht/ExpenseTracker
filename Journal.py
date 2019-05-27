@@ -45,6 +45,10 @@ class Journal:
     def searchReciept(self, filt = None):
         try:
             tmpJournal = self._Journal__applyFilter(filt = filt)
+            if tmpJournal == []:
+                print("Nothing matches that filter. Try a different one!\n")
+                return
+                
             res = -1
             while res not in range(0, len(tmpJournal) + 1):
                 print("0.\tCancel\n")
@@ -199,6 +203,9 @@ class Journal:
     #off of that otherwise it prints the entire contents
     def printJournal(self, filt = None):
         tmpJournal = self._Journal__applyFilter(filt = filt)
+        if tmpJournal == []:
+            print("You don't have any data to report yet. Add some reciepts now!\n")
+            return
 
         for reciept in tmpJournal:
             print(reciept)
@@ -207,6 +214,9 @@ class Journal:
     #to sum regardless of sign and purely on magnitude or regarding sign and based off net costs
     def sumJournal(self, filt = None):
         tmpJournal = self._Journal__applyFilter(filt = filt)
+        if tmpJournal == []:
+            print("You don't have any data to report yet. Add some reciepts now!\n")
+            return
 
         sum = 0.0
         res = input("Sum unbiased (ignore sign) or biased (include sign)?\t")
@@ -223,6 +233,9 @@ class Journal:
     #to saverage regardless of sign and purely on magnitude or regarding sign and based off net costs
     def averageJournal(self, filt = None):
         tmpJournal = self._Journal__applyFilter(filt = filt)
+        if tmpJournal == []:
+            print("You don't have any data to report yet. Add some reciepts now!\n")
+            return
 
         sum = 0.0
         res = input("Average unbiased (ignore sign) or biased (include sign)?\t")
