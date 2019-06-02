@@ -14,7 +14,7 @@ class DigitalReciept:
         self.genre = ""
 
     def __str__(self):
-        return "{0:<9.8} {1:<4}  ${2:>8.2f}  {4:^12.11}  {3:^14.13}  Notes: {5:<50}".format(self.dateOfPurchase.strftime("%x"), self.cardNum, self.cost*self.signCost, self.placeOfPurchase, self.genre, self.information)
+        return "{0:<9.8} {1:<4}  ${2:>8.2f}  {4:^12.11}  {3:^14.13}  Notes: {5:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, self.cost*self.signCost, self.placeOfPurchase, self.genre, self.information)
         
     def __lt__(self,other):
         if self.dateOfPurchase == other.getDate():
@@ -69,9 +69,16 @@ class DigitalReciept:
         success = False
         while not success:
             try:
-                dateStr = input("Enter the date of purchase:\t")
+                dateStr = input("Enter the date of purchase (Enter nothing for todays date):\t")
+                if dateStr == "": 
+                    self.dateOfPurchase = date.today()
+                    return
                 patt = re.search(r'(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})',dateStr)
-                self.dateOfPurchase = date(int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
+                #if user only entered two number year make sure it is actually in 2000
+                if(int(patt.group(3)) < 100):
+                    self.dateOfPurchase = date(2000 + int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
+                else:
+                    self.dateOfPurchase = date(int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
                 success = True
             except:
                 print("Please make sure your date is valid and entered in US format.")
@@ -213,14 +220,14 @@ class FilterReciept:
         return finalString
 
     def __eq__(self, other):
-        return self.loCost == other.loCost and self.hiCost == other.hiCost and self.signCost == other.signCost and self.cardNum == other.cardNum and self.startDate == other.startDate and self.endDate == other.endDate and self.placeOfPurchase == other.placeOfPurchase and self.genre == other.genre and self.keyWord == other.keyWord
+        return self.loCost == other.loCost and self.hiCost == other.hiCost and self.signCost == other.signCost and self.cardNum == other.cardNum and self.startDate == other.startDate and self.endDate.date() == other.endDate.date() and self.placeOfPurchase == other.placeOfPurchase and self.genre == other.genre and self.keyWord == other.keyWord
 
     def match(self, reciept):
         matches = True
         if self.startDate is not None:
-            matches = matches and self.startDate <= reciept.getDate()
+            matches = matches and (self.startDate <= reciept.getDate())
         if self.endDate is not None:
-             matches = matches and self.endDate > reciept.getDate()
+             matches = matches and (self.endDate > reciept.getDate())
         if self.cardNum is not None:
             matches = matches and (self.cardNum == reciept.getCardNum())
         if self.signCost is not None:
@@ -278,7 +285,11 @@ class FilterReciept:
                     break
 
                 patt = re.search(r'(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})',dateStr)
-                self.startDate = date(int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
+                #if user only entered two number year make sure it is actually in 2000
+                if(int(patt.group(3)) < 100):
+                    self.startDate = date(2000 + int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
+                else:
+                    self.startDate = date(int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
                 success = True
             except:
                 print("Please make sure your date is valid and entered in US format.")
@@ -293,7 +304,10 @@ class FilterReciept:
                     break
 
                 patt = re.search(r'(\d{1,2})[/\-.](\d{1,2})[/\-.](\d{2,4})',dateStr)
-                self.endDate = date(int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
+                if(int(patt.group(3)) < 100):
+                    self.endDate = date(2000 + int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
+                else:
+                    self.startDate = date(int(patt.group(3)), int(patt.group(1)), int(patt.group(2)))
                 success = True
             except:
                 print("Please make sure your date is valid and entered in US format.")
@@ -350,14 +364,16 @@ class FilterReciept:
                 elif option == 5:
                     self.queryPlace()
                 elif option == 6:
-                    self.queryKeyword()      
+                    self.queryKeyword()     
+            return 
         except ValueError:
             print("Please enter an integer argument.")
             self.fillFilter(genres)
 
 def getLastMonthFilter():
     f = FilterReciept()
-    f.startDate = date.today().replace(day=2) - timedelta(days=1)
+    f.startDate = (date.today().replace(day=1) - timedelta(days=1)).replace(day = 1)
+    f.endDate = date.today().replace(day = 1)
     return f
 
 def getLastYearFilter():
