@@ -1,4 +1,5 @@
-import DigitalReciept, functools, pickle
+import DigitalReciept, functools, pickle, traceback
+from datetime import date
 
 #journal will work similar to accounting journal, keep track of expenses and entries to different categories. Contains functions to get analytics from spendings
 class Journal:
@@ -36,7 +37,6 @@ class Journal:
         p.fillReciept(list(self.genres.keys()))
         self.journal.append(p)
         self.journal.sort()
-
         return True
 
     #TODO: inefficient: figure out an insert in order way rather than needlessly sorting list every time
@@ -48,10 +48,10 @@ class Journal:
             if tmpJournal == []:
                 print("Nothing matches that filter. Try a different one!\n")
                 return
-                
+
             res = -1
             while res not in range(0, len(tmpJournal) + 1):
-                print("0.\tCancel\n")
+                print("0.\tCancel")
                 i = 1
                 for reciept in tmpJournal:
                     print(str(i) + ".", str(reciept), sep = "\t", end = "\n")
@@ -64,6 +64,7 @@ class Journal:
             return None
         except ValueError:
             print("Please enter an integer argument.")
+            traceback.print_exc()
             return self.searchReciept(filt = filt)
 
     #allows user to edit a reciept that has been searched for
@@ -90,7 +91,9 @@ class Journal:
 
     #gets a temporary filter
     def temporaryFilter(self):
-        return DigitalReciept.FilterReciept().fillFilter(self.genres.keys())
+        f = DigitalReciept.FilterReciept()
+        f.fillFilter(list(self.genres.keys()))
+        return ("TEMP",f)
 
     def editFilters(self):
         try:
@@ -120,14 +123,14 @@ class Journal:
     #menu for editing a filter can only delete a filter as filters are easily dispensable and creatable
     def __editFilter(self, filterIndex):
         try:
-            print(str(filterIndex+1) + ".\t" + self.filters.keys().at(filterIndex) + ":\t " + str(self.filters.values.at(filterIndex)) + "\n" +
+            print(str(filterIndex+1) + ".\t" + list(self.filters.keys())[filterIndex] + ":\t " + str(list(self.filters.values())[filterIndex]) + "\n" +
                     "\t0.\tBack\n" +
                     "\t1.\tDelete Filter\n")
 
             res = int(input("Enter an option:\t"))
         
             while res not in range(0,3):
-                print(str(filterIndex+1) + ".\t" + self.filters.keys().at(filterIndex) + ":\t " + str(self.filters.values.at(filterIndex)) + "\n" +
+                print(str(filterIndex+1) + ".\t" + list(self.filters.keys())[filterIndex] + ":\t " + str(list(self.filters.values())[filterIndex]) + "\n" +
                         "\t0.\tBack\n" +
                         "\t.\tDelete Filter\n")
 
@@ -144,9 +147,9 @@ class Journal:
     #deletes the filter at the given index in the dictionary
     def __deleteFilter(self, filterIndex):
         #if the filter to be deleted is the current filter then set the current filter to None
-        if self.filters[self.filters.keys.at(filterIndex)] == self.curFilter[-1]:
+        if self.curFilter and self.filters[list(self.filters.keys())[filterIndex]] is self.curFilter[-1]:
             self.curFilter = None
-        del self.filters[self.filters.keys.at(filterIndex)]
+        del self.filters[list(self.filters.keys())[filterIndex]]
 
     #helper funciton that applies the current filter and returns the resulting sublist 
     def __applyFilter(self, filt = None):
@@ -181,7 +184,7 @@ class Journal:
             elif res is 1:
                 self.curFilter = None
             elif res is not 0:
-                self._Journal__setCurFilter(self.filters.keys[res-2])
+                self._Journal__setCurFilter(list(self.filters.keys())[res-2])
 
         except ValueError:
             print("Please enter an integer argument")
@@ -190,7 +193,7 @@ class Journal:
     #sets the current filter from a name in the filters dicitonary unless the name is not there then it prints an error
     def __setCurFilter(self, filterName, filt = None):
         if filt:
-            self.curFilter = ("Temp", filt)
+            self.curFilter = filt
             return True
         elif filterName in self.filters.keys():
             self.curFilter = (filterName, self.filters[filterName])
@@ -269,16 +272,15 @@ class Journal:
     def generateReport(self, timeUnit = "m"):
         f = None
         if "m" == timeUnit:
-            print("--------------------\n" + 
-                  " LAST MONTHS REPORT \n" + 
-                  "--------------------\n")
-        f = ("Last Month", DigitalReciept.getLastMonthFilter())
+            f = ("Last Month", DigitalReciept.getLastMonthFilter())
+            print("------------------------------------------------------------------------------------------------------------------------\n" + 
+                  "{:^120}\n".format("LAST MONTHS REPORT: " + f[-1].startDate.strftime("%b, %Y")) + 
+                  "------------------------------------------------------------------------------------------------------------------------\n")
         tmpJournal = self._Journal__applyFilter(filt = f)
         if tmpJournal == []:
             print("You don't have any data to report yet. Add some reciepts now!\n")
             return
 
-        print(tmpJournal) 
         balance = 0.0
         sum = 0.0
         minReciept = tmpJournal[0]
@@ -291,32 +293,35 @@ class Journal:
 
 
         print("MONTHLY BUDGET:\t" + str(self.budget), end = "\n")
-        print("MONTHLY BALANCE:\t${0:>8.2f}".format(balance), end = "\n")
-        print("MONTHLY SUM:\t${0:>8.2f}".format(sum), end = "\n")
-        print("AVERAGE DAILY EXPENDITURE:\t${0:>8.2f}".format(balance/len(tmpJournal)), end = "\n")
+        print("MONTHLY BALANCE:\t${:>8.2f}".format(balance), end = "\n")
+        print("MONTHLY SUM:\t${:>8.2f}".format(sum), end = "\n")
+        print("AVERAGE DAILY EXPENDITURE:\t${:>8.2f}".format(balance/len(tmpJournal)), end = "\n")
         print("MINIMUM RECIEPT:\t" + str(minReciept), end = "\n")
-        print("MAXIMUM RECIEPT:\t" + str(maxReciept), end = "\n")
+        print("MAXIMUM RECIEPT:\t" + str(maxReciept), end = "\n\n")
         print("--------------------\n" +
               "  REPORT BY GENRE   \n" + 
               "--------------------\n")
         for genre in self.genres.keys():
             self.generateGenreReport(genre, timeUnit, tmpJournal)
+        print("------------------------------------------------------------------------------------------------------------------------\n" +
+              "{:^120}\n".format("END REPORT") + 
+              "------------------------------------------------------------------------------------------------------------------------\n")
 
     #NOTE: inefficient if time implement method to generate all information for reports in a single run through the list. Use a dictionary for that
     def generateGenreReport(self, genre, timeUnit, tmpJournal):
         print("    --------------------\n" +
-              "    {0:^20.20}\n".format(genre) + 
+              "    {:^20.20}\n".format(genre) + 
               "    --------------------\n")
 
         balance = 0.0
         sum = 0.0
-        minReciept = maxReciept = tmpJournal[0]
+        minReciept = maxReciept = None
         for reciept in tmpJournal:
             if reciept.genre == genre:
                 balance = balance + reciept.getRealCost()
                 sum = sum + reciept.getCost()
-                if minReciept.getRealCost() > reciept.getRealCost(): minReciept = reciept
-                if maxReciept.getRealCost() < reciept.getRealCost(): maxReciept = reciept
+                if not minReciept or minReciept.getRealCost() > reciept.getRealCost(): minReciept = reciept 
+                if not maxReciept or maxReciept.getRealCost() < reciept.getRealCost(): maxReciept = reciept
 
 
         print("    MONTHLY BUDGET:\t" + str(self.budget), end = "\n")
@@ -324,7 +329,7 @@ class Journal:
         print("    MONTHLY SUM:\t${0:>8.2f}".format(sum), end = "\n")
         print("    AVERAGE DAILY EXPENDITURE:\t${0:>8.2f}".format(balance/len(tmpJournal)), end = "\n")
         print("    MINIMUM RECIEPT:\t" + str(minReciept), end = "\n")
-        print("    MAXIMUM RECIEPT:\t" + str(maxReciept), end = "\n")
+        print("    MAXIMUM RECIEPT:\t" + str(maxReciept), end = "\n\n")
    
     #adds a new genre to the genre list
     def addGenre(self):

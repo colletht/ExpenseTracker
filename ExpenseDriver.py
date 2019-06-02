@@ -139,32 +139,39 @@ class ExpenseDriver:
 
     def __addGenre(self):
         self.curJournal.addGenre()
+        self.curJournal.writeJournal(os.path.join(PATH_TO_APPFILES, self.curFile))
         return True
 
     def __editGenre(self):
         self.curJournal.editGenres()
+        self.curJournal.writeJournal(os.path.join(PATH_TO_APPFILES, self.curFile))
         return True
 
     def __addReciept(self):
         self.curJournal.addReciept()
+        self.curJournal.writeJournal(os.path.join(PATH_TO_APPFILES, self.curFile))
         return True
 
     def __editReciept(self):
         print("Create a temporary filter to narrow our search.")
-        self.curJournal.editReciept(self.curJournal.searchReciept(self.curJournal.temporaryFilter()))
+        tReciept = self.curJournal.searchReciept(self.curJournal.temporaryFilter())
+        if tReciept: self.curJournal.editReciept(tReciept)
         return True
 
     def __deleteReciept(self):
         print("Create a temporary filter to narrow our search.")
-        self.curJournal.deleteReciept(self.curJournal.searchReciept(self.curJournal.temporaryFilter()))
+        tReciept = self.curJournal.searchReciept(self.curJournal.temporaryFilter())
+        if tReciept: self.curJournal.deleteReciept(tReciept)
         return True
 
     def __addFilter(self):
         self.curJournal.addFilter()
+        self.curJournal.writeJournal(os.path.join(PATH_TO_APPFILES, self.curFile))
         return True
 
     def __editFilter(self):
         self.curJournal.editFilters()
+        self.curJournal.writeJournal(os.path.join(PATH_TO_APPFILES, self.curFile))
         return True
 
     def __setFilter(self):
