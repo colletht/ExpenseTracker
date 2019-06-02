@@ -3,6 +3,7 @@
 import os, pickle
 from pathvalidate import is_valid_filename
 from Journal import Journal
+from datetime import date
 
 PATH_TO_APPFILES = "C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles"
 PATH_TO_EXPORTS = "C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\Exports"
@@ -226,8 +227,8 @@ class ExpenseDriver:
         try:
             res = -1
             while res not in range(0,3):
-                print("0.\tBack" +
-                      "1.\tExport Journal to CSV" +
+                print("0.\tBack",
+                      "1.\tExport Journal to CSV",
                       "2.\tExport Report to TXT", sep = '\n', end = '\n')
                 
                 res = int(input(self._ExpenseDriver__getPrompt()))
@@ -236,17 +237,23 @@ class ExpenseDriver:
                 return True
             else:
                 if res is 1:
-                    exportFile = self._ExpenseDriver__createFile(fileType = ".csv", exports = True)
-                    self.curJournal.exportJournal(os.path.join(PATH_TO_EXPORTS, exportFile))
+                    exportFile = self._ExpenseDriver__createExportFile(fileType = ".csv", dataType = "Journal")
+                    self.curJournal.exportJournal(os.path.join(PATH_TO_EXPORTS, exportFile), sep = "m")
                 else:
-                    exportFile = self._ExpenseDriver__createFile(fileType = ".txt", exports = True)
+                    exportFile = self._ExpenseDriver__createExportFile(fileType = ".txt", dataType = "Report")
                     self.curJournal.exportReport(os.path.join(PATH_TO_EXPORTS, exportFile))
-                print("You can find the file created in the exports folder\n" + PATH_TO_EXPORTS)
+                print("Created file " + exportFile + " in folder: " + PATH_TO_EXPORTS)
 
             return True
         except ValueError:
             print("Please enter an integer argument.")
             return self._ExpenseDriver__export()
+
+    #function for creating a file for export with an auto generated name of the form "curFile_dataType_<date generated>.<fileType>"
+    def __createExportFile(self, fileType = ".csv", dataType = "Journal"):
+        filename = self.curFile + "_" + dataType + "_" + date.today().strftime("%d-%m-%Y") + fileType
+        open(os.path.join(PATH_TO_EXPORTS, filename),"w+").close()
+        return filename
 
     def REPL(self):
         run = True
