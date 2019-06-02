@@ -1,5 +1,6 @@
 import DigitalReciept, functools, pickle, traceback, csv
 from datetime import date
+from dateutil import relativedelta
 
 #journal will work similar to accounting journal, keep track of expenses and entries to different categories. Contains functions to get analytics from spendings
 class Journal:
@@ -248,7 +249,7 @@ class Journal:
         sumBal =  0.0
         for reciept in tmpJournal:
             sumBal += reciept.getRealCost()
-        print("Your current Journal Balance is:\t" + str(sumBal))
+        print("Your current Journal Balance is:\t${0:>8.2f}".format(sumBal))
     
     #averages the journal, using the same methods for filtering as printJournal. Gives the user the option
     #to saverage regardless of sign and purely on magnitude or regarding sign and based off net costs
@@ -264,9 +265,9 @@ class Journal:
         for reciept in tmpJournal:
             sum = sum + reciept.getRealCost()
         perPurchase = sum/len(tmpJournal)
-        perMonth = sum/(endDate- startDate).days if endDate != startDate else sum
+        perMonth = sum/relativedelta.relativedelta(endDate, startDate).months if endDate.replace(day = 1).month != startDate.replace(day = 1).month else sum
         perDay = sum/(endDate - startDate).days if (endDate != startDate) else sum
-        print("Your averages are:\n$ " + str(perPurchase) + " per purchase\n$ " + str(perMonth) + " per Month\n$ " + str(perDay) + " per Day\n")
+        print("Your averages are:\t$ {0:>8.2f}  per purchase\n\t\t\t$ {1:>8.2f}  per Month\n\t\t\t$ {2:>8.2f}  per Day\n".format(perPurchase, perMonth, perDay))
 
     def exportReport(self, exportFile, timeUnit = "m"):
         outString = self.generateReport()
