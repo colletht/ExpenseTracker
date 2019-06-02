@@ -25,7 +25,7 @@ class ExpenseDriver:
         #case no files in appfiles == user never created journal. Walks through journal creation
         if not os.listdir(PATH_TO_APPFILES):
             filename = input("It appears you have no journals yet. Please enter the name of your first journal:\t") + ".pkl"
-            while(not is_valid_filename(filename)):
+            while not is_valid_filename(filename):
                 filename = input("Please enter a valid filename:\t") + ".pkl"
             #create file
             open(os.path.join(PATH_TO_APPFILES, filename),"w+").close()
@@ -216,7 +216,7 @@ class ExpenseDriver:
 
     #TODO: add future functionality for different time spans
     def __generateReport(self):
-        self.curJournal.generateReport()
+        print(self.curJournal.generateReport(), end = '')
         return True
 
     def __help(self):
@@ -228,20 +228,22 @@ class ExpenseDriver:
             while res not in range(0,3):
                 print("0.\tBack" +
                       "1.\tExport Journal to CSV" +
-                      "2.\tExport Report to CSV", sep = '\n', end = '\n')
+                      "2.\tExport Report to TXT", sep = '\n', end = '\n')
                 
                 res = int(input(self._ExpenseDriver__getPrompt()))
             
             if res is 0:
                 return True
             else:
-                exportFile = self._ExpenseDriver__createFile(fileType = ".csv", exports = True)
-                print("You can find the file created in the exports folder\n" + PATH_TO_EXPORTS)
                 if res is 1:
+                    exportFile = self._ExpenseDriver__createFile(fileType = ".csv", exports = True)
                     self.curJournal.exportJournal(os.path.join(PATH_TO_EXPORTS, exportFile))
                 else:
+                    exportFile = self._ExpenseDriver__createFile(fileType = ".txt", exports = True)
                     self.curJournal.exportReport(os.path.join(PATH_TO_EXPORTS, exportFile))
+                print("You can find the file created in the exports folder\n" + PATH_TO_EXPORTS)
 
+            return True
         except ValueError:
             print("Please enter an integer argument.")
             return self._ExpenseDriver__export()
