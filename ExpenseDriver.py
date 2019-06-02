@@ -5,6 +5,7 @@ from pathvalidate import is_valid_filename
 from Journal import Journal
 
 PATH_TO_APPFILES = "C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles"
+PATH_TO_EXPORTS = "C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\Exports"
 
 class ExpenseDriver:
     def __init__(self):
@@ -17,7 +18,7 @@ class ExpenseDriver:
                         [("0.\tBack", None), ("1.\tAdd a new Filter", self.__addFilter), ("2.\tEdit your Filters", self.__editFilter), ("3.\tSet a Current Filter", self.__setFilter)],
                         [("0.\tBack", None), ("1.\tPrint your Journal", self.__printJournal), ("2.\tView Journal Sum", self.__sumJournal), ("3.\tView Journal Averages", self.__averageJournal)],
                         None,
-                        None]
+                        [("0.\tBack", None), ("1.\tHelp", self.__help), ("2.\tExport", self.__export)]]
 
 
 
@@ -60,13 +61,21 @@ class ExpenseDriver:
             print("Please enter an integer argument.")
             return self._ExpenseDriver__selectFile()
 
-    def __createFile(self):
-        filename = input("Please enter the name of your new journal:\t") + ".pkl"
+    def __createFile(self, fileType = ".pkl", exports = False):
+        if exports:
+            filename = input("Please enter the name of your new export file:\t") + fileType
+        else:
+            filename = input("Please enter the name of your new journal:\t") + fileType
+
         while(not is_valid_filename(filename)):
-            filename = input("Please enter a valid filename:\t") + ".pkl"
+            filename = input("Please enter a valid filename:\t") + fileType
+
         #create file
-        open(os.path.join(PATH_TO_APPFILES, filename),"w+").close()
-        print("Succesfully created save file for " + str(filename[0:-4]))
+        if exports:
+            open(os.path.join(PATH_TO_EXPORTS, filename),"w+").close()
+        else:
+            open(os.path.join(PATH_TO_APPFILES, filename),"w+").close()
+        print("Succesfully created file for " + str(filename[0:-4]))
         return filename
 
     #prints to the console the menu. SubMenu represents the level of the menu, -1 represents head menu, see plan.txt for menu structure
@@ -209,6 +218,33 @@ class ExpenseDriver:
     def __generateReport(self):
         self.curJournal.generateReport()
         return True
+
+    def __help(self):
+        pass
+
+    def __export(self):
+        try:
+            res = -1
+            while res not in range(0,3):
+                print("0.\tBack" +
+                      "1.\tExport Journal to CSV" +
+                      "2.\tExport Report to CSV", sep = '\n', end = '\n')
+                
+                res = int(input(self._ExpenseDriver__getPrompt()))
+            
+            if res is 0:
+                return True
+            else:
+                exportFile = self._ExpenseDriver__createFile(fileType = ".csv", exports = True)
+                print("You can find the file created in the exports folder\n" + PATH_TO_EXPORTS)
+                if res is 1:
+                    self.curJournal.exportJournal(os.path.join(PATH_TO_EXPORTS, exportFile))
+                else:
+                    self.curJournal.exportReport(os.path.join(PATH_TO_EXPORTS, exportFile))
+
+        except ValueError:
+            print("Please enter an integer argument.")
+            return self._ExpenseDriver__export()
 
     def REPL(self):
         run = True
