@@ -245,16 +245,10 @@ class Journal:
             print("You don't have any data to report yet. Add some reciepts now!\n")
             return
 
-        sum = 0.0
-        res = input("Sum unbiased (ignore sign) or biased (include sign)?\t")
-        if 'un' in res: 
-            for reciept in tmpJournal:
-                sum = sum + reciept.getCost()
-            print("The unbiased sum (inconsiderate of sign) is:\t" + str(sum))
-        else:
-            for reciept in tmpJournal:
-                sum = sum + reciept.getRealCost()
-            print("The biased sum (considerate of sign) is:\t" + (sum))
+        sumBal =  0.0
+        for reciept in tmpJournal:
+            sumBal += reciept.getRealCost()
+        print("Your current Journal Balance is:\t" + str(sumBal))
     
     #averages the journal, using the same methods for filtering as printJournal. Gives the user the option
     #to saverage regardless of sign and purely on magnitude or regarding sign and based off net costs
@@ -265,17 +259,14 @@ class Journal:
             return
 
         sum = 0.0
-        res = input("Average unbiased (ignore sign) or biased (include sign)?\t")
-        if 'un' in res: 
-            for reciept in tmpJournal:
-                sum = sum + reciept.getCost()
-            sum = sum/len(tmpJournal)
-            print("The unbiased average (inconsiderate of sign) is:\t" + str(sum))
-        else:
-            for reciept in tmpJournal:
-                sum = sum + reciept.getRealCost()
-            sum = sum/len(tmpJournal)
-            print("The biased average (considerate of sign) is:\t" + str(sum))
+        startDate = tmpJournal[0].getDate()
+        endDate = tmpJournal[-1].getDate()
+        for reciept in tmpJournal:
+            sum = sum + reciept.getRealCost()
+        perPurchase = sum/len(tmpJournal)
+        perMonth = sum/(endDate- startDate).days if endDate != startDate else sum
+        perDay = sum/(endDate - startDate).days if (endDate != startDate) else sum
+        print("Your averages are:\n$ " + str(perPurchase) + " per purchase\n$ " + str(perMonth) + " per Month\n$ " + str(perDay) + " per Day\n")
 
     def exportReport(self, exportFile, timeUnit = "m"):
         outString = self.generateReport()

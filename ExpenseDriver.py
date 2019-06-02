@@ -221,7 +221,42 @@ class ExpenseDriver:
         return True
 
     def __help(self):
-        pass
+        print(
+        "0. Exit",
+            "\tExit the application, save your work in a file of your choice",
+        "1. Reciepts",
+            "\t1. Add a new Reciept",
+                "\t\tAdd a new reciept to your journal",
+            "\t2. Edit an existing Reciept",
+                "\t\tEdit your existing reciepts, or delete them",
+        "2. Genres",
+            "\t1. Add a new Genre",
+                "\t\tAdd a new genre to your journal",
+            "\t2. Edit your Genre Settings",
+                "\t\tEdit your genres, set a new budget for a genre or delete one",
+        "3. Filters",
+            "\t1. Add a new Filter",
+                "\t\tAdd a new filter to your journal",
+            "\t2. Edit your Filters",
+                "\t\tEdit your filters",
+            "\t3. Set a Current Filter",
+                "\t\tChoose a filter to set as your current filter, \nor create a temporary one, \nor remove you current filter",
+        "4. Analytics",
+            "\t1. Print your Journal",
+                "\t\tPrint your journal out",
+            "\t2. View Journal Sum",
+                "\t\tView your journal balance",
+            "\t3. View Journal Averages",
+                "\t\tView your journal averages",
+        "5. Generate a Report",
+            "\tGenerate a report of your journal and analytics",
+        "6. Settings",
+            "\t1. Help",
+            "\t2. Exports", 
+                "\t\tChoose to export data to either a .csv or a .txt file",
+                sep = "\n", end = "\n")
+        input("Press enter to continue")
+        return True
 
     def __export(self):
         try:

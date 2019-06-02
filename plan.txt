@@ -23,6 +23,9 @@ Commands (Verbose):
             3. View Journal Averages
         5. Generate a Report
         6. Settings
+            1. Help
+            2. Exports
+            
 
         Filtering by <FilterName> >>>
 
