@@ -238,46 +238,112 @@ class Journal:
         for reciept in tmpJournal:
             print(reciept)
         
+    def sum(self, filt = None, realCost = True):
+        tmpJournal = self._Journal__applyFilter(filt = filt)
+        if tmpJournal == []:
+            return None
+
+        sum = 0.0
+        for reciept in tmpJournal:
+            if realCost:
+                sum = sum + reciept.getRealCost()
+            else:
+                sum = sum + reciept.getCost()
+
+        return sum
+
     #sums the journal, using the same methods for filtering as printJournal. Gives the user the option
     #to sum regardless of sign and purely on magnitude or regarding sign and based off net costs
     def sumJournal(self, filt = None):
-        tmpJournal = self._Journal__applyFilter(filt = filt)
-        if tmpJournal == []:
-            print("You don't have any data to report yet. Add some reciepts now!\n")
-            return
+        sumBal = self.sum(filt = filt)
 
-        sumBal =  0.0
-        for reciept in tmpJournal:
-            sumBal += reciept.getRealCost()
-        print("Your current Journal Balance is:\t${0:>8.2f}".format(sumBal))
+        if sumBal:
+            print("Your current Journal Balance is:\t${0:>8.2f}".format(sumBal))
     
+    def transactionlyAverage(self, filt = None):
+        sum = self.sum(filt = filt)
+
+        if sum:
+            tmpJournal = self._Journal__applyFilter(filt = filt)
+
+            return sum/len(tmpJournal)
+        return None
+
+    def dailyAverage(self, filt = None):
+        sum = self.sum(filt = filt)
+
+        if sum:
+            tmpJournal = self._Journal__applyFilter(filt = filt)
+
+            
+            startDate = tmpJournal[0].getDate()
+            endDate = tmpJournal[-1].getDate()
+
+            if (endDate != startDate):
+                return sum/(endDate - startDate).days
+            return sum
+        return None
+
+    def weeklyAverage(self, filt = None):
+        sum = self.sum(filt = filt)
+
+        if sum:
+            tmpJournal = self._Journal__applyFilter(filt = filt)
+
+            
+            startDate = tmpJournal[0].getDate()
+            endDate = tmpJournal[-1].getDate()
+
+            if relativedelta.relativedelta(endDate, startDate).weeks is not 0:
+                return sum/relativedelta.relativedelta(endDate, startDate).weeks
+            return sum
+        return None
+
+    def monthlyAverage(self, filt = None):
+        sum = self.sum(filt = filt)
+
+        if sum:
+            tmpJournal = self._Journal__applyFilter(filt = filt)
+
+            
+            startDate = tmpJournal[0].getDate()
+            endDate = tmpJournal[-1].getDate()
+
+            if relativedelta.relativedelta(endDate, startDate).months is not 0:
+                return sum/relativedelta.relativedelta(endDate, startDate).months
+            return sum
+        return None
+
+    def yearlyAverage(self, filt = None):
+        sum = self.sum(filt = filt)
+
+        if sum:
+            tmpJournal = self._Journal__applyFilter(filt = filt)
+
+            
+            startDate = tmpJournal[0].getDate()
+            endDate = tmpJournal[-1].getDate()
+
+            if relativedelta.relativedelta(endDate, startDate).years is not 0:
+                return sum/relativedelta.relativedelta(endDate, startDate).years
+            return sum
+        return None
+
+
     #averages the journal, using the same methods for filtering as printJournal. Gives the user the option
     #to saverage regardless of sign and purely on magnitude or regarding sign and based off net costs
     def averageJournal(self, filt = None):
-        tmpJournal = self._Journal__applyFilter(filt = filt)
-        if tmpJournal == []:
+        transactionly = transactionlyAverage(filt = filt)
+
+        if not transactionly:
             print("You don't have any data to report yet. Add some reciepts now!\n")
-            return
+            return None
 
-        sum = 0.0
-        startDate = tmpJournal[0].getDate()
-        endDate = tmpJournal[-1].getDate()
-        for reciept in tmpJournal:
-            sum = sum + reciept.getRealCost()
-
-        perPurchase = sum/len(tmpJournal)
-
-        if relativedelta.relativedelta(endDate, startDate).months is not 0:
-            perMonth = sum/relativedelta.relativedelta(endDate, startDate).months 
-        else:
-            perMonth = sum
-
-        if (endDate != startDate):
-            perDay = sum/(endDate - startDate).days
-        else: 
-            perDay = sum
-
-        print("Your averages are:\t$ {0:>8.2f}  per purchase\n\t\t\t$ {1:>8.2f}  per Month\n\t\t\t$ {2:>8.2f}  per Day\n".format(perPurchase, perMonth, perDay))
+        daily = dailyAverage(filt = filt)
+        weekly = weeklyAverage(filt = filt)
+        monthly = monthly(filt = filt)
+        print("Your averages are:\t$ {0:>8.2f}  per purchase\n\t\t\t$ {1:>8.2f}  per Month\n\t\t\t$ {1:>8.2f}  per Week\n\t\t\t$ {2:>8.2f}  per Day\n".format(transactionly, monthly, weekly, daily))
+        return True
 
     def exportReport(self, exportFile, timeUnit = "m"):
         outString = self.generateReport()
