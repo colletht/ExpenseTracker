@@ -5,8 +5,8 @@ from pathvalidate import is_valid_filename
 from Journal import Journal
 from datetime import date
 
-PATH_TO_APPFILES = "C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\AppFiles"
-PATH_TO_EXPORTS = "C:\\Users\\colle\\Documents\\Python Experiments\\ExpenseTracker\\Exports"
+PATH_TO_APPFILES = "C:\\Program Files\\ExpenseTracker\\AppFiles"
+PATH_TO_EXPORTS = "C:\\Program Files\\ExpenseTracker\\Exports"
 
 class ExpenseDriver:
     def __init__(self):
@@ -39,7 +39,7 @@ class ExpenseDriver:
             if os.stat(os.path.join(PATH_TO_APPFILES, self.curFile)).st_size is not 0:
                 with open(os.path.join(PATH_TO_APPFILES, self.curFile),"rb") as infile:
                     self.curJournal = pickle.load(infile)
-                    print("Succesfully loaded journal from file " + self.curFile, end = ".\n")
+                    print("Succesfully loaded journal from file \"" + self.curFile, end = "\".\n")
 
     #walks user through selecting from existing files in directory or creating a new file, return the name of the file created
     def __selectFile(self):
@@ -76,7 +76,7 @@ class ExpenseDriver:
             open(os.path.join(PATH_TO_EXPORTS, filename),"w+").close()
         else:
             open(os.path.join(PATH_TO_APPFILES, filename),"w+").close()
-        print("Succesfully created file for " + str(filename[0:-4]))
+        print("Succesfully created file for \"" + str(filename[0:-4]) + "\"")
         return filename
 
     #prints to the console the menu. SubMenu represents the level of the menu, -1 represents head menu, see plan.txt for menu structure
@@ -123,14 +123,14 @@ class ExpenseDriver:
     #performs all necessary procedures to exit the program, namely saving the journal into the default, or entered by user, file
     def __exit(self):
         try:
-            print("Save your journal to \"" + self.curFile[0:-4] + "\"",
+            print("Save your journal to \"" + self.curFile[0:-4] + "\"?",
                     "0.\tDon't Save",
                     "1.\tOK",
                     "2.\tChoose another File", sep = "\n", end = "\n")
             res = int(input(self._ExpenseDriver__getPrompt()))
 
             while res not in range(0,3):
-                print("Save your journal to \"" + self.curFile[0:-4] + "\"",
+                print("Save your journal to \"" + self.curFile[0:-4] + "\"?",
                         "0.\tDon't Save",
                         "1.\tOK",
                         "2.\tChoose another File", sep = "\n", end = "\n")
