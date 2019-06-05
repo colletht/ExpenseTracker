@@ -276,7 +276,7 @@ class ExpenseDriver:
                     self.curJournal.exportJournal(os.path.join(PATH_TO_EXPORTS, exportFile), sep = "m")
                 else:
                     exportFile = self._ExpenseDriver__createExportFile(fileType = ".txt", dataType = "Report")
-                    self.curJournal.exportReport(os.path.join(PATH_TO_EXPORTS, exportFile))
+                    self.curJournal.exportReport(exportFile)
                 print("Created file \"" + exportFile + "\" in folder: \"" + PATH_TO_EXPORTS + "\"")
 
             return True
@@ -286,9 +286,15 @@ class ExpenseDriver:
 
     #function for creating a file for export with an auto generated name of the form "curFile_dataType_<date generated>.<fileType>"
     def __createExportFile(self, fileType = ".csv", dataType = "Journal"):
-        filename = self.curFile + "_" + dataType + "_" + date.today().strftime("%d-%m-%Y") + fileType
-        open(os.path.join(PATH_TO_EXPORTS, filename),"w+").close()
-        return filename
+        pathToFile = os.path.join(PATH_TO_EXPORTS, self.curFile[0:-4])
+        if not os.path.isdir(pathToFile):
+            os.mkdir(pathToFile)
+        pathToFile = os.path.join(pathToFile,dataType)
+        if not os.path.isdir(pathToFile):
+            os.mkdir(pathToFile)
+        filename = self.curFile[0:-4] + "_" + dataType + "_" + date.today().strftime("%d-%m-%Y") + fileType
+        open(os.path.join(pathToFile, filename),"w+").close()
+        return os.path.join(pathToFile,filename)
 
     def REPL(self):
         run = True

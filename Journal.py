@@ -170,8 +170,8 @@ class Journal:
             
             res = int(input("Enter a filter to edit, or " + str(i) + " to create a temporary filter: \t"))
 
-            while res not in range(0, len(self.filters) + 2):
-                print("0.\tBack\n" + "1.\tNo Filter\n")
+            while res not in range(0, len(self.filters) + 3):
+                print("0.\tBack\n" + "1.\tNo Filter")
                 i = 2
                 for name, filt in self.filters.items():
                     print(str(i) + ".", name + ":", str(filt), sep = "\t", end = "\n")
@@ -264,9 +264,19 @@ class Journal:
         endDate = tmpJournal[-1].getDate()
         for reciept in tmpJournal:
             sum = sum + reciept.getRealCost()
+
         perPurchase = sum/len(tmpJournal)
-        perMonth = sum/relativedelta.relativedelta(endDate, startDate).months if endDate.replace(day = 1).month != startDate.replace(day = 1).month else sum
-        perDay = sum/(endDate - startDate).days if (endDate != startDate) else sum
+
+        if relativedelta.relativedelta(endDate, startDate).months is not 0:
+            perMonth = sum/relativedelta.relativedelta(endDate, startDate).months 
+        else:
+            perMonth = sum
+
+        if (endDate != startDate):
+            perDay = sum/(endDate - startDate).days
+        else: 
+            perDay = sum
+
         print("Your averages are:\t$ {0:>8.2f}  per purchase\n\t\t\t$ {1:>8.2f}  per Month\n\t\t\t$ {2:>8.2f}  per Day\n".format(perPurchase, perMonth, perDay))
 
     def exportReport(self, exportFile, timeUnit = "m"):

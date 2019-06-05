@@ -109,15 +109,15 @@ class DigitalReciept:
             for x in genres:
                 print(i, x, sep = '\t', end = '\n')
                 i+=1
-            res = int(input("Select a genre by number:\t")) - 1
+            res = int(input("Select a genre by number:\t"))
 
-            while res not in range(0, len(genres)):
+            while res not in range(1, len(genres)+1):
                 for x in genres:
                     print(i, x, sep = '\t', end = '\n')
                     i+=1
-                res = int(input("Select a genre by number:\t")) - 1
+                res = int(input("Select a genre by number:\t"))
 
-            self.genre = genres[res]
+            self.genre = genres[res - 1]
         except:
             print("Please enter a number corresponding to a genre on the screen.")
             self.queryGenre(genres)
@@ -323,7 +323,7 @@ class FilterReciept:
                 i+=1
             res = int(input("Select a genre by number:\t"))
 
-            while res not in range(0, len(genres)):
+            while res not in range(1, len(genres) + 1):
                 for x in genres:
                     print(i, x, sep = '\t', end = '\n')
                     i+=1

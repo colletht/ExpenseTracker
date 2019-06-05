@@ -1,4 +1,4 @@
 AppFiles/*.*
 .vscode
 __pycache__
-Exports/*.*
+Exports/*
