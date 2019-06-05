@@ -1,5 +1,5 @@
 import DigitalReciept, functools, pickle, traceback, csv
-from datetime import date
+from datetime import date, timedelta
 from dateutil import relativedelta
 
 #journal will work similar to accounting journal, keep track of expenses and entries to different categories. Contains functions to get analytics from spendings
@@ -280,7 +280,7 @@ class Journal:
             endDate = tmpJournal[-1].getDate()
 
             if (endDate != startDate):
-                return sum/(endDate - startDate).days
+                return sum/((endDate - startDate).days)
             return sum
         return None
 
@@ -294,8 +294,10 @@ class Journal:
             startDate = tmpJournal[0].getDate()
             endDate = tmpJournal[-1].getDate()
 
-            if relativedelta.relativedelta(endDate, startDate).weeks is not 0:
-                return sum/relativedelta.relativedelta(endDate, startDate).weeks
+            weeks = ((endDate - timedelta(days=endDate.weekday())) - (startDate - timedelta(days=startDate.weekday()))).days/7
+
+            if weeks is not 0:
+                return sum/weeks
             return sum
         return None
 
@@ -333,16 +335,16 @@ class Journal:
     #averages the journal, using the same methods for filtering as printJournal. Gives the user the option
     #to saverage regardless of sign and purely on magnitude or regarding sign and based off net costs
     def averageJournal(self, filt = None):
-        transactionly = transactionlyAverage(filt = filt)
+        transactionly = self.transactionlyAverage(filt = filt)
 
         if not transactionly:
             print("You don't have any data to report yet. Add some reciepts now!\n")
             return None
 
-        daily = dailyAverage(filt = filt)
-        weekly = weeklyAverage(filt = filt)
-        monthly = monthly(filt = filt)
-        print("Your averages are:\t$ {0:>8.2f}  per purchase\n\t\t\t$ {1:>8.2f}  per Month\n\t\t\t$ {1:>8.2f}  per Week\n\t\t\t$ {2:>8.2f}  per Day\n".format(transactionly, monthly, weekly, daily))
+        daily = self.dailyAverage(filt = filt)
+        weekly = self.weeklyAverage(filt = filt)
+        monthly = self.monthlyAverage(filt = filt)
+        print("Your averages are:\t$ {0:>8.2f}  per purchase\n\t\t\t$ {1:>8.2f}  per Month\n\t\t\t$ {2:>8.2f}  per Week\n\t\t\t$ {3:>8.2f}  per Day\n".format(transactionly, monthly, weekly, daily))
         return True
 
     def exportReport(self, exportFile, timeUnit = "m"):
