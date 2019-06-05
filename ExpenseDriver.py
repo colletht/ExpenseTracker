@@ -277,7 +277,7 @@ class ExpenseDriver:
                 else:
                     exportFile = self._ExpenseDriver__createExportFile(fileType = ".txt", dataType = "Report")
                     self.curJournal.exportReport(os.path.join(PATH_TO_EXPORTS, exportFile))
-                print("Created file " + exportFile + " in folder: " + PATH_TO_EXPORTS)
+                print("Created file \"" + exportFile + "\" in folder: \"" + PATH_TO_EXPORTS + "\"")
 
             return True
         except ValueError:
