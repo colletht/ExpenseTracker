@@ -1,5 +1,6 @@
 import re
 from datetime import date,timedelta
+from colorama import Fore, Style
 #File contains definition for Digital Reciept object that will store data for an individual reciept
 
 #digital reciept class, holds data for reciept and all functions responsible for maintaining reciept
@@ -14,8 +15,12 @@ class DigitalReciept:
         self.genre = ""
 
     def __str__(self):
-        return "{0:<9.8} {1:<4}  ${2:>8.2f}  {4:^12.11}  {3:^14.13}  Notes: {5:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, self.cost*self.signCost, self.placeOfPurchase, self.genre, self.information)
-        
+        if self.signCost < 0:
+            return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5:^12.11}  {6:^14.13}  Notes: {7:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.RED+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
+        else:
+            return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5:^12.11}  {6:^14.13}  Notes: {7:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.GREEN+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
+
+
     def __lt__(self,other):
         if self.dateOfPurchase == other.getDate():
             if self.cardNum == other.getCardNum():

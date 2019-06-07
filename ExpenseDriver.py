@@ -4,15 +4,21 @@ import os, pickle
 from pathvalidate import is_valid_filename
 from Journal import Journal
 from datetime import date
+from colorama import init, Fore, Style
 
 PATH_TO_APPFILES = "C:\\Program Files\\ExpenseTracker\\AppFiles"
 PATH_TO_EXPORTS = "C:\\Program Files\\ExpenseTracker\\Exports"
 
 class ExpenseDriver:
     def __init__(self):
+        self.curJournal = Journal()
+
+        #initializes command window for color printing
+        #autoreset=True means that color changes will only persist through calling print statement
+        init(autoreset=True)
+
         #list of values for menu. this structure acts as a map that redirects the program to the appropriate functions
         #if a none value is present it means redirect and display the page at the index of the number at the current option
-        self.curJournal = Journal()
         self.__menu = [[("0.\tExit", self.__exit) , ("1.\tReciepts", None), ("2.\tGenres", None), ("3.\tFilters", None), ("4.\tAnalytics", None), ("5.\tGenerate a Report", self._ExpenseDriver__generateReport), ("6.\tSettings", None)], 
                         [("0.\tBack", None), ("1.\tAdd a new Reciept", self.__addReciept), ("2.\tEdit an existing Reciept", self.__editReciept), ("3.\tDelete a Reciept", self.__deleteReciept)],
                         [("0.\tBack", None), ("1.\tAdd a new Genre", self.__addGenre), ("2.\tEdit your Genre Settings", self.__editGenre)],
@@ -82,7 +88,7 @@ class ExpenseDriver:
     #prints to the console the menu. SubMenu represents the level of the menu, -1 represents head menu, see plan.txt for menu structure
     def __printMenu(self, subMenu = 0):
         for x,_ in self._ExpenseDriver__menu[subMenu]:
-            print(x)
+            print(Fore.CYAN + Style.BRIGHT + x)
         print()
     
     #helper that constructs prompt depending on state of program
