@@ -30,6 +30,11 @@ class ExpenseDriver:
 
 
         #case no files in appfiles == user never created journal. Walks through journal creation
+        if not os.path.isdir(PATH_TO_APPFILES):
+            os.mkdir(PATH_TO_APPFILES)
+        if not os.path.isdir(PATH_TO_EXPORTS):
+            os.mkdir(PATH_TO_EXPORTS)
+
         if not os.listdir(PATH_TO_APPFILES):
             filename = input("It appears you have no journals yet. Please enter the name of your first journal:\t") + ".pkl"
             while not is_valid_filename(filename):
