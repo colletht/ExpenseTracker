@@ -9,6 +9,10 @@ from colorama import init, Fore, Style
 PATH_TO_APPFILES = "C:\\Program Files\\ExpenseTracker\\AppFiles"
 PATH_TO_EXPORTS = "C:\\Program Files\\ExpenseTracker\\Exports"
 
+def inputC(argString):
+    print(argString, end = '')
+    return input()
+
 class ExpenseDriver:
     def __init__(self):
         self.curJournal = Journal()
@@ -17,6 +21,7 @@ class ExpenseDriver:
         #autoreset=True means that color changes will only persist through calling print statement
         init(autoreset=True)
 
+        #TODO: make __menu a tree structure and port ALL menu-like operations to this tree to make modifications and such in the future easier
         #list of values for menu. this structure acts as a map that redirects the program to the appropriate functions
         #if a none value is present it means redirect and display the page at the index of the number at the current option
         self.__menu = [[("0.\tExit", self.__exit) , ("1.\tReciepts", None), ("2.\tGenres", None), ("3.\tFilters", None), ("4.\tAnalytics", None), ("5.\tGenerate a Report", self._ExpenseDriver__generateReport), ("6.\tSettings", None)], 
@@ -36,9 +41,9 @@ class ExpenseDriver:
             os.mkdir(PATH_TO_EXPORTS)
 
         if not os.listdir(PATH_TO_APPFILES):
-            filename = input("It appears you have no journals yet. Please enter the name of your first journal:\t") + ".pkl"
+            filename = inputC("It appears you have no journals yet. Please enter the name of your first journal:\t") + ".pkl"
             while not is_valid_filename(filename):
-                filename = input("Please enter a valid filename:\t") + ".pkl"
+                filename = inputC("Please enter a valid filename:\t") + ".pkl"
             #create file
             open(os.path.join(PATH_TO_APPFILES, filename),"w+").close()
             self.curFile = filename
@@ -63,7 +68,7 @@ class ExpenseDriver:
                     print(str(i) + ".\t" + fName[0:-4] + ".")
                     i = i + 1
 
-                res = int(input("Please select which file you would like to load your journal from:\t"))
+                res = int(inputC("Please select which file you would like to load your journal from:\t"))
             
             if res is not 0:
                 return os.listdir(PATH_TO_APPFILES)[res-1]
@@ -75,12 +80,12 @@ class ExpenseDriver:
 
     def __createFile(self, fileType = ".pkl", exports = False):
         if exports:
-            filename = input("Please enter the name of your new export file:\t") + fileType
+            filename = inputC("Please enter the name of your new export file:\t") + fileType
         else:
-            filename = input("Please enter the name of your new journal:\t") + fileType
+            filename = inputC("Please enter the name of your new journal:\t") + fileType
 
         while(not is_valid_filename(filename)):
-            filename = input("Please enter a valid filename:\t") + fileType
+            filename = inputC("Please enter a valid filename:\t") + fileType
 
         #create file
         if exports:
@@ -92,13 +97,14 @@ class ExpenseDriver:
 
     #prints to the console the menu. SubMenu represents the level of the menu, -1 represents head menu, see plan.txt for menu structure
     def __printMenu(self, subMenu = 0):
+        print()
         for x,_ in self._ExpenseDriver__menu[subMenu]:
             print(Fore.CYAN + Style.BRIGHT + x)
         print()
     
     #helper that constructs prompt depending on state of program
     def __getPrompt(self):
-        promptString = self.curFile[0:-4]
+        promptString = Fore.BLUE + Style.BRIGHT + self.curFile[0:-4]
         if self.curJournal.curFilter:
             promptString += " - Filtering by: \"" + str(self.curJournal.curFilter[0]) + "\""
             
@@ -110,13 +116,13 @@ class ExpenseDriver:
         try:
             #get the option from the user
             self._ExpenseDriver__printMenu(subMenu = subMenu)
-            res = int(input(self._ExpenseDriver__getPrompt()))
+            res = int(inputC(self._ExpenseDriver__getPrompt()))
             print()
 
             #make sure res is a in the range of the possible options
             while res not in range(0,len(self._ExpenseDriver__menu[subMenu])):
                 self._ExpenseDriver__printMenu(subMenu = subMenu)
-                res = int(input(self._ExpenseDriver__getPrompt()))
+                res = int(inputC(self._ExpenseDriver__getPrompt()))
                 print()
 
             if self._ExpenseDriver__menu[subMenu][res][-1]:
@@ -138,14 +144,14 @@ class ExpenseDriver:
                     "0.\tDon't Save",
                     "1.\tOK",
                     "2.\tChoose another File", sep = "\n", end = "\n")
-            res = int(input(self._ExpenseDriver__getPrompt()))
+            res = int(inputC(self._ExpenseDriver__getPrompt()))
 
             while res not in range(0,3):
                 print("Save your journal to \"" + self.curFile[0:-4] + "\"?",
                         "0.\tDon't Save",
                         "1.\tOK",
                         "2.\tChoose another File", sep = "\n", end = "\n")
-                res = int(input(self._ExpenseDriver__getPrompt()))
+                res = int(inputC(self._ExpenseDriver__getPrompt()))
 
             if res is 1:
                 self.curJournal.writeJournal(os.path.join(PATH_TO_APPFILES, self.curFile))
@@ -266,7 +272,7 @@ class ExpenseDriver:
             "\t2. Exports", 
                 "\t\tChoose to export data to either a .csv or a .txt file",
                 sep = "\n", end = "\n")
-        input("Press enter to continue")
+        inputC("Press enter to continue")
         return True
 
     def __export(self):
@@ -277,7 +283,7 @@ class ExpenseDriver:
                       "1.\tExport Journal to CSV",
                       "2.\tExport Report to TXT", sep = '\n', end = '\n')
                 
-                res = int(input(self._ExpenseDriver__getPrompt()))
+                res = int(inputC(self._ExpenseDriver__getPrompt()))
             
             if res is 0:
                 return True
@@ -313,7 +319,6 @@ class ExpenseDriver:
             fun = self._ExpenseDriver__getMenuOption(subMenu = 0)
             run = fun()
             
-
 
 if __name__ == '__main__':
     expenseTracker = ExpenseDriver()

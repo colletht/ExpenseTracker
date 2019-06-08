@@ -16,10 +16,7 @@ class DigitalReciept:
 
     def __str__(self):
         if self.signCost < 0:
-            return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5:^12.11}  {6:^14.13}  Notes: {7:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.RED+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
-        else:
-            return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5:^12.11}  {6:^14.13}  Notes: {7:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.GREEN+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
-
+            return "{0:<9.8} {1:<4}  ${2:>8.2f}  {3:^12.11}  {4:^14.13}  Notes: {5:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, self.cost*self.signCost,self.genre, self.placeOfPurchase, self.information)
 
     def __lt__(self,other):
         if self.dateOfPurchase == other.getDate():
@@ -43,6 +40,22 @@ class DigitalReciept:
 
     def __ge__(self, other):
         return (self > other) or (self == other)
+
+    def toString(self, color = True, verbose = False):
+        if color and verbose:
+            if self.signCost < 0:
+                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5}  {6}  Notes: {7}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.RED+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
+            else:
+                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5}  {6}  Notes: {7}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.GREEN+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
+        elif color:
+            if self.signCost < 0:
+                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5:^12.11}  {6:^14.13}  Notes: {7:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.RED+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
+            else:
+                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5:^12.11}  {6:^14.13}  Notes: {7:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.GREEN+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
+        elif verbose:
+            return "{0:<9.8} {1:<4}  ${2:>8.2f}  {3}  {4}  Notes: {5}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, self.cost*self.signCost,self.genre, self.placeOfPurchase, self.information)
+        else:
+            return self.__str__()
 
     #getters
     def getDate(self):
@@ -139,7 +152,7 @@ class DigitalReciept:
             option = 0
             while option is not 7:
                 option = 0
-                while option < 1 or option > 7:
+                while option in range(1,8):
                     print(self)
                     print("What field do you wish to edit:",
                         "1. Date of Purchase",
@@ -374,6 +387,11 @@ class FilterReciept:
         except ValueError:
             print("Please enter an integer argument.")
             self.fillFilter(genres)
+
+def getGenreFilter(genre = ""):
+    f = FilterReciept()
+    f.genre = genre
+    return f
 
 def getLastMonthFilter():
     f = FilterReciept()

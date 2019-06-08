@@ -154,10 +154,15 @@ class Journal:
         del self.filters[list(self.filters.keys())[filterIndex]]
 
     #helper funciton that applies the current filter and returns the resulting sublist 
-    def __applyFilter(self, filt = None):
-        if not filt:
+    def __applyFilter(self, filt = None, otherJournal = None):
+        if not filt and not otherJournal:
             return self.journal
-        subJournal = list(filter(filt[-1].match, self.journal))
+        elif not filt and otherJournal:
+            return otherJournal
+        elif filt and otherJournal:
+            subJournal = list(filter(filt[-1].match, otherJournal))
+        else:
+            subJournal = list(filter(filt[-1].match, self.journal))
         return subJournal
 
     def setFilter(self):
@@ -349,7 +354,7 @@ class Journal:
         return True
 
     def exportReport(self, exportFile, timeUnit = "m"):
-        outString = self.generateReport()
+        outString = self.generateReport(color = False)
         if outString != "":
             with open(exportFile, "w") as exportTxt:
                 exportTxt.write(outString)
@@ -372,7 +377,7 @@ class Journal:
     #       Min Reciept
     #       Max Reciept
     #   
-    def generateReport(self, timeUnit = "m"):
+    def generateReport(self, timeUnit = "m", color = True):
         outString = ""
         f = None
         if "m" == timeUnit:
@@ -400,24 +405,27 @@ class Journal:
         outString += ("MONTHLY BALANCE:\t${:>8.2f}".format(balance) + "\n")
         outString += ("MONTHLY SUM:\t${:>8.2f}".format(sum) + "\n")
         outString += ("AVERAGE DAILY EXPENDITURE:\t${:>8.2f}".format(balance/len(tmpJournal)) + "\n")
-        outString += ("MINIMUM RECIEPT:\t" + str(minReciept) + "\n")
-        outString += ("MAXIMUM RECIEPT:\t" + str(maxReciept) + "\n\n")
+        outString += ("MINIMUM RECIEPT:\t" + minReciept.toString(color = color, verbose = True) + "\n")
+        outString += ("MAXIMUM RECIEPT:\t" + maxReciept.toString(color = color, verbose = True) + "\n\n")
         outString += ("--------------------\n" +
               "  REPORT BY GENRE   \n" + 
               "--------------------\n")
         for genre in self.genres.keys():
-            outString += self.generateGenreReport(genre, timeUnit, tmpJournal)
+            outString += self.generateGenreReport(genre, self.__applyFilter(("",DigitalReciept.getGenreFilter(genre)), otherJournal = tmpJournal), color = color)
         outString += ("------------------------------------------------------------------------------------------------------------------------\n" +
               "{:^120}\n".format("END REPORT") + 
               "------------------------------------------------------------------------------------------------------------------------\n\n")
         return outString
 
     #NOTE: inefficient if time implement method to generate all information for reports in a single run through the list. Use a dictionary for that
-    def generateGenreReport(self, genre, timeUnit, tmpJournal):
+    def generateGenreReport(self, genre, tmpJournal, color = True):
         outString = ""
         outString += ("    --------------------\n" +
               "    {:^20.20}\n".format(genre) + 
               "    --------------------\n\n")
+        if tmpJournal == []:
+            outString += "    NO DATA TO REPORT\n\n"
+            return outString
 
         balance = 0.0
         sum = 0.0
@@ -434,8 +442,8 @@ class Journal:
         outString += ("    MONTHLY BALANCE:\t${0:>8.2f}".format(balance) + "\n")
         outString += ("    MONTHLY SUM:\t${0:>8.2f}".format(sum) + "\n")
         outString += ("    AVERAGE DAILY EXPENDITURE:\t${0:>8.2f}".format(balance/len(tmpJournal)) + "\n")
-        outString += ("    MINIMUM RECIEPT:\t" + str(minReciept) + "\n")
-        outString += ("    MAXIMUM RECIEPT:\t" + str(maxReciept) + "\n\n")
+        outString += ("    MINIMUM RECIEPT:\t" + minReciept.toString(color = color, verbose = True) + "\n")
+        outString += ("    MAXIMUM RECIEPT:\t" + maxReciept.toString(color = color, verbose = True) + "\n\n")
         return outString
    
     #adds a new genre to the genre list
