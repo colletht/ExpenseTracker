@@ -99,12 +99,12 @@ class ExpenseDriver:
     def __printMenu(self, subMenu = 0):
         print()
         for x,_ in self._ExpenseDriver__menu[subMenu]:
-            print(Fore.CYAN + Style.BRIGHT + x)
+            print(Fore.LIGHTCYAN_EX + Style.BRIGHT + x)
         print()
     
     #helper that constructs prompt depending on state of program
     def __getPrompt(self):
-        promptString = Fore.BLUE + Style.BRIGHT + self.curFile[0:-4]
+        promptString = Fore.LIGHTYELLOW_EX + Style.BRIGHT + self.curFile[0:-4]
         if self.curJournal.curFilter:
             promptString += " - Filtering by: \"" + str(self.curJournal.curFilter[0]) + "\""
             

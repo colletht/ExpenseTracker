@@ -15,8 +15,7 @@ class DigitalReciept:
         self.genre = ""
 
     def __str__(self):
-        if self.signCost < 0:
-            return "{0:<9.8} {1:<4}  ${2:>8.2f}  {3:^12.11}  {4:^14.13}  Notes: {5:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, self.cost*self.signCost,self.genre, self.placeOfPurchase, self.information)
+        return "{0:<9.8} {1:<4}  ${2:>8.2f}  {3:^12.11}  {4:^14.13}  Notes: {5:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, self.cost*self.signCost,self.genre, self.placeOfPurchase, self.information)
 
     def __lt__(self,other):
         if self.dateOfPurchase == other.getDate():

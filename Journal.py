@@ -3,6 +3,14 @@ from datetime import date, timedelta
 from dateutil import relativedelta
 from colorama import Fore, Style
 
+def getCostColor(cost):
+    if cost < 0:
+        return Fore.RED + Style.BRIGHT
+    elif cost > 0:
+        return Fore.GREEN + Style.BRIGHT
+    else:
+        return Fore.WHITE
+
 #journal will work similar to accounting journal, keep track of expenses and entries to different categories. Contains functions to get analytics from spendings
 class Journal:
     def __init__(self, genreList = {'Food':None,'Hygene':None,'Cleaning':None,'Clothes':None,'Alcohol':None,'Recreation':None,'Gaming':None,'Gas':None}):
@@ -19,6 +27,8 @@ class Journal:
     def queryBudget(self):
         try:
             res = input("Enter a monthly budget:\t")
+            if res == "":
+                return None
             res = float(res)
             return res
         except ValueError:
@@ -56,7 +66,7 @@ class Journal:
                 print("0.\tCancel")
                 i = 1
                 for reciept in tmpJournal:
-                    print(str(i) + ".", str(reciept), sep = "\t", end = "\n")
+                    print(str(i) + ".", reciept.toString(), sep = "\t", end = "\n")
                     i = i+1
         
                 res = int(input("Enter the desired reciept:\t"))
@@ -242,7 +252,7 @@ class Journal:
             return
 
         for reciept in tmpJournal:
-            print(reciept)
+            print(reciept.toString())
         
     def sum(self, filt = None, realCost = True):
         tmpJournal = self._Journal__applyFilter(filt = filt)
@@ -264,7 +274,7 @@ class Journal:
         sumBal = self.sum(filt = filt)
 
         if sumBal:
-            print("Your current Journal Balance is:\t${0:>8.2f}".format(sumBal))
+            print("Your current Journal Balance is:\t$ {}{:>8.2f}".format(getCostColor(sumBal), sumBal))
     
     def transactionlyAverage(self, filt = None):
         sum = self.sum(filt = filt)
@@ -302,7 +312,7 @@ class Journal:
 
             weeks = ((endDate - timedelta(days=endDate.weekday())) - (startDate - timedelta(days=startDate.weekday()))).days/7
 
-            if weeks is not 0:
+            if weeks != 0:
                 return sum/weeks
             return sum
         return None
@@ -317,7 +327,7 @@ class Journal:
             startDate = tmpJournal[0].getDate()
             endDate = tmpJournal[-1].getDate()
 
-            if relativedelta.relativedelta(endDate, startDate).months is not 0:
+            if relativedelta.relativedelta(endDate, startDate).months != 0:
                 return sum/relativedelta.relativedelta(endDate, startDate).months
             return sum
         return None
@@ -332,7 +342,7 @@ class Journal:
             startDate = tmpJournal[0].getDate()
             endDate = tmpJournal[-1].getDate()
 
-            if relativedelta.relativedelta(endDate, startDate).years is not 0:
+            if relativedelta.relativedelta(endDate, startDate).years != 0:
                 return sum/relativedelta.relativedelta(endDate, startDate).years
             return sum
         return None
@@ -350,7 +360,10 @@ class Journal:
         daily = self.dailyAverage(filt = filt)
         weekly = self.weeklyAverage(filt = filt)
         monthly = self.monthlyAverage(filt = filt)
-        print("Your averages are:\t$ {0:>8.2f}  per purchase\n\t\t\t$ {1:>8.2f}  per Month\n\t\t\t$ {2:>8.2f}  per Week\n\t\t\t$ {3:>8.2f}  per Day\n".format(transactionly, monthly, weekly, daily))
+        print("Your averages are:\t$ {}{:>8.2f}{}  per purchase".format(getCostColor(transactionly), transactionly, Style.RESET_ALL))
+        print("\t\t\t$ {}{:>8.2f}{}  per Month".format(getCostColor(monthly), monthly, Style.RESET_ALL))
+        print("\t\t\t$ {}{:>8.2f}{}  per Week".format(getCostColor(weekly), weekly, Style.RESET_ALL))
+        print("\t\t\t$ {}{:>8.2f}{}  per Day\n".format(getCostColor(daily), daily, Style.RESET_ALL))
         return True
 
     def exportReport(self, exportFile, timeUnit = "m"):
