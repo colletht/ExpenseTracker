@@ -291,9 +291,12 @@ class Journal:
         if sum:
             tmpJournal = self._Journal__applyFilter(filt = filt)
 
-            
-            startDate = tmpJournal[0].getDate()
-            endDate = tmpJournal[-1].getDate()
+            if(not filt[-1].startDate or not filt[-1].endDate):
+                startDate = tmpJournal[0].getDate()
+                endDate = tmpJournal[-1].getDate()
+            else:
+                startDate = filt[-1].startDate
+                endDate = filt[-1].endDate
 
             if (endDate != startDate):
                 return sum/((endDate - startDate).days)
@@ -306,9 +309,12 @@ class Journal:
         if sum:
             tmpJournal = self._Journal__applyFilter(filt = filt)
 
-            
-            startDate = tmpJournal[0].getDate()
-            endDate = tmpJournal[-1].getDate()
+            if(not filt[-1].startDate or not filt[-1].endDate):
+                startDate = tmpJournal[0].getDate()
+                endDate = tmpJournal[-1].getDate()
+            else:
+                startDate = filt[-1].startDate
+                endDate = filt[-1].endDate
 
             weeks = ((endDate - timedelta(days=endDate.weekday())) - (startDate - timedelta(days=startDate.weekday()))).days/7
 
@@ -324,8 +330,12 @@ class Journal:
             tmpJournal = self._Journal__applyFilter(filt = filt)
 
             
-            startDate = tmpJournal[0].getDate()
-            endDate = tmpJournal[-1].getDate()
+            if(not filt[-1].startDate or not filt[-1].endDate):
+                startDate = tmpJournal[0].getDate()
+                endDate = tmpJournal[-1].getDate()
+            else:
+                startDate = filt[-1].startDate
+                endDate = filt[-1].endDate
 
             if relativedelta.relativedelta(endDate, startDate).months != 0:
                 return sum/relativedelta.relativedelta(endDate, startDate).months
@@ -339,8 +349,12 @@ class Journal:
             tmpJournal = self._Journal__applyFilter(filt = filt)
 
             
-            startDate = tmpJournal[0].getDate()
-            endDate = tmpJournal[-1].getDate()
+            if(not filt[-1].startDate or not filt[-1].endDate):
+                startDate = tmpJournal[0].getDate()
+                endDate = tmpJournal[-1].getDate()
+            else:
+                startDate = filt[-1].startDate
+                endDate = filt[-1].endDate
 
             if relativedelta.relativedelta(endDate, startDate).years != 0:
                 return sum/relativedelta.relativedelta(endDate, startDate).years
@@ -417,7 +431,7 @@ class Journal:
         outString += ("MONTHLY BUDGET:\t" + str(self.budget) + "\n")
         outString += ("MONTHLY BALANCE:\t${:>8.2f}".format(balance) + "\n")
         outString += ("MONTHLY SUM:\t${:>8.2f}".format(sum) + "\n")
-        outString += ("AVERAGE DAILY EXPENDITURE:\t${:>8.2f}".format(balance/len(tmpJournal)) + "\n")
+        outString += ("AVERAGE DAILY EXPENDITURE:\t${:>8.2f}".format(self.dailyAverage(filt = f)) + "\n")
         outString += ("MINIMUM RECIEPT:\t" + minReciept.toString(color = color, verbose = True) + "\n")
         outString += ("MAXIMUM RECIEPT:\t" + maxReciept.toString(color = color, verbose = True) + "\n\n")
         outString += ("--------------------\n" +
@@ -440,6 +454,10 @@ class Journal:
             outString += "    NO DATA TO REPORT\n\n"
             return outString
 
+        f = DigitalReciept.getLastMonthFilter()
+        f.genre = genre
+        f = ('', f)
+
         balance = 0.0
         sum = 0.0
         minReciept = maxReciept = None
@@ -454,7 +472,7 @@ class Journal:
         outString += ("    MONTHLY BUDGET:\t" + str(self.budget) + "\n")
         outString += ("    MONTHLY BALANCE:\t${0:>8.2f}".format(balance) + "\n")
         outString += ("    MONTHLY SUM:\t${0:>8.2f}".format(sum) + "\n")
-        outString += ("    AVERAGE DAILY EXPENDITURE:\t${0:>8.2f}".format(balance/len(tmpJournal)) + "\n")
+        outString += ("    AVERAGE DAILY EXPENDITURE:\t${0:>8.2f}".format(self.dailyAverage(filt = f)) + "\n")
         outString += ("    MINIMUM RECIEPT:\t" + minReciept.toString(color = color, verbose = True) + "\n")
         outString += ("    MAXIMUM RECIEPT:\t" + maxReciept.toString(color = color, verbose = True) + "\n\n")
         return outString
