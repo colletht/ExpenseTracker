@@ -76,7 +76,6 @@ class Journal:
             return None
         except ValueError:
             print("Please enter an integer argument.")
-            traceback.print_exc()
             return self.searchReciept(filt = filt)
 
     #allows user to edit a reciept that has been searched for

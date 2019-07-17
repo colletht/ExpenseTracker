@@ -151,7 +151,7 @@ class DigitalReciept:
             option = 0
             while option is not 7:
                 option = 0
-                while option in range(1,8):
+                while option not in range(1,8):
                     print(self)
                     print("What field do you wish to edit:",
                         "1. Date of Purchase",
