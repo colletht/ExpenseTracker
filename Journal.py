@@ -290,7 +290,7 @@ class Journal:
         if sum:
             tmpJournal = self._Journal__applyFilter(filt = filt)
 
-            if(not filt[-1].startDate or not filt[-1].endDate):
+            if(not filt or not filt[-1].startDate or not filt[-1].endDate):
                 startDate = tmpJournal[0].getDate()
                 endDate = tmpJournal[-1].getDate()
             else:
