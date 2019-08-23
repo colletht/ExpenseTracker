@@ -135,7 +135,7 @@ class DigitalReciept:
                 res = int(input("Select a genre by number:\t"))
 
             self.genre = genres[res - 1]
-        except:
+        except ValueError:
             print("Please enter a number corresponding to a genre on the screen.")
             self.queryGenre(genres)
 
