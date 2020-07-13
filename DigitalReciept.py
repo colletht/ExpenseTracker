@@ -3,6 +3,14 @@ from datetime import date,timedelta
 from colorama import Fore, Style
 #File contains definition for Digital Reciept object that will store data for an individual reciept
 
+REDTEXT = Fore.RED + Style.BRIGHT
+GREENTEXT = Fore.GREEN + Style.BRIGHT
+
+#utility function. Input() does not play nice with colorama so we need to print the string first before calling input
+def inputC(argString):
+    print(argString, end = '')
+    return input()
+
 #digital reciept class, holds data for reciept and all functions responsible for maintaining reciept
 class DigitalReciept:
     def __init__(self):
@@ -43,14 +51,14 @@ class DigitalReciept:
     def toString(self, color = True, verbose = False):
         if color and verbose:
             if self.signCost < 0:
-                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5}  {6}  Notes: {7}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.RED+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
+                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5}  {6}  Notes: {7}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, REDTEXT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
             else:
-                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5}  {6}  Notes: {7}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.GREEN+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
+                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5}  {6}  Notes: {7}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, GREENTEXT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
         elif color:
             if self.signCost < 0:
-                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5:^12.11}  {6:^14.13}  Notes: {7:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.RED+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
+                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5:^12.11}  {6:^14.13}  Notes: {7:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, REDTEXT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
             else:
-                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5:^12.11}  {6:^14.13}  Notes: {7:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, Fore.GREEN+Style.BRIGHT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
+                return "{0:<9.8} {1:<4}  ${2}{3:>8.2f}{4}  {5:^12.11}  {6:^14.13}  Notes: {7:<50}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, GREENTEXT, self.cost*self.signCost, Style.RESET_ALL,self.genre, self.placeOfPurchase, self.information)
         elif verbose:
             return "{0:<9.8} {1:<4}  ${2:>8.2f}  {3}  {4}  Notes: {5}".format(self.dateOfPurchase.strftime("%m/%d/%y"), self.cardNum, self.cost*self.signCost,self.genre, self.placeOfPurchase, self.information)
         else:
@@ -104,10 +112,10 @@ class DigitalReciept:
         self.cardNum = input("Enter four digit card number:\t")
 
     def queryCost(self):
-        sign = input("Debit or Credit to account:\t").lower()
+        sign = inputC(GREENTEXT + "Debit " + Style.RESET_ALL + "or " + REDTEXT + "Credit " + Style.RESET_ALL + "to account:\t").lower()
 
         while sign != "debit" and sign != "credit":
-            sign = input("Debit or Credit to account:\t").lower()
+            sign = inputC(GREENTEXT + "Debit " + Style.RESET_ALL + "or " + REDTEXT + "Credit " + Style.RESET_ALL + "to account:\t").lower()
         if sign == "debit":
             self.signCost = 1
         else:
@@ -263,9 +271,9 @@ class FilterReciept:
 
     def queryCost(self):
         err = True
-        x = input("Filter by Debit/Credit (Enter for none)? (D/C)\t")
+        x = inputC("Filter by " + GREENTEXT + " Debit " + Style.RESET_ALL + "or " + REDTEXT + "Credit " + Style.RESET_ALL +  "(Enter for none)? (D/C)\t")
         while x is not "D" and x is not "C" and x is not "N":
-            x = input("Filter by Debit/Credit (Enter for none)? (D/C)\t")
+            x = inputC("Filter by " + GREENTEXT + " Debit " + Style.RESET_ALL + "or " + REDTEXT + "Credit " + Style.RESET_ALL +  "(Enter for none)? (D/C)\t")
         if x is "D":
             self.signCost = 1
         elif x is "C":

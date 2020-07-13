@@ -86,6 +86,8 @@ class Journal:
         for x in range(0,len(self.journal)):
             if self.journal[x] == reciept:
                 del self.journal[x]
+                return True
+        return False
 
     #guides the user through adding a new filter to the filters dicitonary and asks if it should be set to the current filter
     def addFilter(self):

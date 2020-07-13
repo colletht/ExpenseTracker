@@ -9,6 +9,7 @@ from colorama import init, Fore, Style
 PATH_TO_APPFILES = "C:\\Program Files\\ExpenseTracker\\AppFiles"
 PATH_TO_EXPORTS = "C:\\Program Files\\ExpenseTracker\\Exports"
 
+#utility function. Input() does not play nice with colorama so we need to print the string first before calling input
 def inputC(argString):
     print(argString, end = '')
     return input()
