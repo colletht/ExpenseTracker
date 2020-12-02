@@ -33,7 +33,7 @@ class Journal:
             return res
         except ValueError:
             print("Please enter a valid value for a budget")
-            return queryBudget(self)
+            return self.queryBudget()
     
     #writes the journal to the pickle file specified in file
     def writeJournal(self,file):

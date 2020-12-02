@@ -53,7 +53,7 @@ class ExpenseDriver:
         #case files in appfiles == user has created journals, must select a journal to load or create a  new one
         else:
             self.curFile = self._ExpenseDriver__selectFile()
-            if os.stat(os.path.join(PATH_TO_APPFILES, self.curFile)).st_size is not 0:
+            if os.stat(os.path.join(PATH_TO_APPFILES, self.curFile)).st_size != 0:
                 with open(os.path.join(PATH_TO_APPFILES, self.curFile),"rb") as infile:
                     self.curJournal = pickle.load(infile)
                     print("Succesfully loaded journal from file \"" + self.curFile, end = "\".\n")
@@ -71,7 +71,7 @@ class ExpenseDriver:
 
                 res = int(inputC("Please select which file you would like to load your journal from:\t"))
             
-            if res is not 0:
+            if res != 0:
                 return os.listdir(PATH_TO_APPFILES)[res-1]
             else:
                 return self.__createFile()
@@ -154,9 +154,9 @@ class ExpenseDriver:
                         "2.\tChoose another File", sep = "\n", end = "\n")
                 res = int(inputC(self._ExpenseDriver__getPrompt()))
 
-            if res is 1:
+            if res == 1:
                 self.curJournal.writeJournal(os.path.join(PATH_TO_APPFILES, self.curFile))
-            elif res is not 0:
+            elif res != 0:
                 self.curJournal.writeJournal(os.path.join(PATH_TO_APPFILES, self._ExpenseDriver__selectFile()))
 
             #indicate that exit has been ran by returning false, thus terminating the loop in REPL
@@ -207,7 +207,7 @@ class ExpenseDriver:
         return True
 
     def __printJournal(self):
-        if self.curJournal.size() is 0:
+        if self.curJournal.size() == 0:
             print("You don't have any reciepts to display yet. Add some!")
             return True
 
@@ -216,7 +216,7 @@ class ExpenseDriver:
         return True
 
     def __sumJournal(self):
-        if self.curJournal.size() is 0:
+        if self.curJournal.size() == 0:
             print("You don't have any reciepts to sum yet. Add some!")
             return True
 
@@ -225,7 +225,7 @@ class ExpenseDriver:
         return True
 
     def __averageJournal(self):
-        if self.curJournal.size() is 0:
+        if self.curJournal.size() == 0:
             print("You don't have any reciepts to average yet. Add some!")
             return True
 
@@ -286,10 +286,10 @@ class ExpenseDriver:
                 
                 res = int(inputC(self._ExpenseDriver__getPrompt()))
             
-            if res is 0:
+            if res == 0:
                 return True
             else:
-                if res is 1:
+                if res == 1:
                     exportFile = self._ExpenseDriver__createExportFile(fileType = ".csv", dataType = "Journal")
                     self.curJournal.exportJournal(os.path.join(PATH_TO_EXPORTS, exportFile), sep = "m")
                 else:

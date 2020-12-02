@@ -184,7 +184,7 @@ class DigitalReciept:
                     self.queryInfo()
         except ValueError:
             print("Please enter an integer argument.")
-            editReciept(genres)
+            self.editReciept(genres)
 
     #fills the reciept in case any missing data was not provided in the constructor
     def fillReciept(self, genres):
